@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Patent Portfolio Audit — IP Axix</title>
+<meta name="description" content="Paste your US patent numbers and get an instant deadline board and portfolio health score — free, no signup. From IP Axix.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --ink:#12212f; --ink-soft:#3a4a58; --paper:#f6f4ef; --card:#ffffff;
+    --line:#e2ddd2; --line-soft:#eee9df;
+    --navy:#1f3a5f; --teal:#00796b; --blue:#1565c0;
+    --amber:#b4741a; --red:#a4232b; --green:#2e6b3b;
+    --accent:var(--teal); --mut:#6d7a84;
+    --shadow:0 1px 2px rgba(18,33,47,.04),0 8px 28px -18px rgba(18,33,47,.28);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ink:#eef2f4; --ink-soft:#c2ccd2; --paper:#0f171d; --card:#161f27;
+      --line:#26333d; --line-soft:#1e2a33;
+      --navy:#8fb2df; --teal:#4fc4b2; --blue:#7fb1ec;
+      --amber:#e0a24d; --red:#e58b90; --green:#7fc78d; --mut:#8b99a3;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -18px rgba(0,0,0,.7);
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  img{max-width:100%}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  a{color:var(--blue)}
+  ::selection{background:color-mix(in srgb,var(--accent) 26%,transparent)}
+
+  header.mast{padding:34px 0 22px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:"IBM Plex Mono",monospace;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;font-size:12.5px;color:var(--accent)}
+  .brand .dot{width:9px;height:9px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+  h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(30px,5.2vw,46px);line-height:1.04;
+    letter-spacing:-.01em;margin:18px 0 0;text-wrap:balance}
+  h1 em{font-style:italic;color:var(--accent)}
+  .lede{font-size:16.5px;color:var(--ink-soft);max-width:60ch;margin:16px 0 0}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+  .inputcard{padding:22px;margin:26px 0 8px}
+  label.field{display:block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:0 0 9px}
+  textarea{width:100%;min-height:96px;resize:vertical;border:1px solid var(--line);border-radius:11px;
+    background:var(--paper);color:var(--ink);padding:13px 14px;font-family:"IBM Plex Mono",monospace;
+    font-size:14px;line-height:1.7}
+  textarea:focus{outline:2px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:1px;border-color:var(--accent)}
+  .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:14px}
+  button.go{font-family:"IBM Plex Sans";font-weight:600;font-size:15px;color:#fff;background:var(--accent);
+    border:none;border-radius:11px;padding:12px 22px;cursor:pointer;transition:filter .15s}
+  button.go:hover{filter:brightness(1.06)} button.go:disabled{opacity:.55;cursor:default}
+  .hint{font-size:12.5px;color:var(--mut)} .hint b{color:var(--ink-soft);font-weight:600}
+  .ghost{background:transparent;border:1px solid var(--line);color:var(--ink-soft);border-radius:10px;
+    padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+  #status{margin:16px 0;font-size:14px;color:var(--ink-soft)}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);
+    border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:8px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+  /* score */
+  .scorecard{display:flex;gap:22px;align-items:center;flex-wrap:wrap;padding:22px 24px;margin:22px 0}
+  .gauge{position:relative;width:104px;height:104px;flex:0 0 auto}
+  .gauge svg{transform:rotate(-90deg)}
+  .gauge .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gauge .val b{font-family:"Fraunces",serif;font-size:30px;font-weight:600;line-height:1}
+  .gauge .val span{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-top:2px}
+  .scoretext{flex:1 1 300px;min-width:240px}
+  .scoretext h2{font-family:"Fraunces",serif;font-weight:600;font-size:21px;margin:0 0 4px;letter-spacing:-.01em}
+  .scoretext p{margin:0;font-size:13.5px;color:var(--ink-soft)}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:11px;margin:16px 0}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  .tile b{display:block;font-family:"Fraunces",serif;font-size:25px;font-weight:600;line-height:1}
+  .tile span{font-size:12px;color:var(--ink-soft);margin-top:5px;display:block}
+  .tile.warn b{color:var(--red)} .tile.soon b{color:var(--amber)} .tile.ok b{color:var(--green)}
+
+  .plist{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .pat{border:1px solid var(--line);border-radius:13px;background:var(--card);overflow:hidden}
+  .pat .top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line-soft)}
+  .pat .pid{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--blue);font-size:13.5px}
+  .pat .pt{flex:1 1 200px;font-size:13.5px;color:var(--ink);min-width:160px}
+  .badge{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.05em;
+    text-transform:uppercase;padding:2px 9px;border-radius:100px;border:1px solid;white-space:nowrap}
+  .b-granted{color:var(--green);border-color:color-mix(in srgb,var(--green) 40%,transparent);background:color-mix(in srgb,var(--green) 10%,transparent)}
+  .b-pending{color:var(--blue);border-color:color-mix(in srgb,var(--blue) 40%,transparent);background:color-mix(in srgb,var(--blue) 10%,transparent)}
+  .b-dead{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,transparent);background:color-mix(in srgb,var(--red) 10%,transparent)}
+  .b-none{color:var(--mut);border-color:var(--line);background:transparent}
+  .dl{display:flex;align-items:center;gap:12px;padding:10px 16px;border-top:1px solid var(--line-soft)}
+  .dl:first-child{border-top:none}
+  .dl .stripe{width:4px;align-self:stretch;border-radius:3px;flex:0 0 4px}
+  .s-overdue{background:var(--red)} .s-soon{background:var(--amber)} .s-upcoming{background:var(--blue)} .s-future{background:var(--line)}
+  .dl .dmain{flex:1}
+  .dl .dtype{font-size:13.5px;font-weight:600;color:var(--ink)}
+  .dl .dnote{font-size:12px;color:var(--mut);margin-top:1px}
+  .dl .ddate{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:600;white-space:nowrap;text-align:right}
+  .dl .ddate small{display:block;font-weight:500;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-top:2px}
+  .d-overdue .ddate{color:var(--red)} .d-soon .ddate{color:var(--amber)}
+  .pat .clean{padding:12px 16px;font-size:12.5px;color:var(--green)}
+  .est{font-size:9.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:6px;font-family:"IBM Plex Mono",monospace}
+
+  .notes{margin-top:16px;font-size:12.5px;color:var(--mut);line-height:1.7}
+  .notes li{margin-bottom:3px}
+
+  .cta{margin:26px 0 10px;padding:24px;border-radius:16px;background:var(--navy);color:#fff}
+  @media (prefers-color-scheme:dark){.cta{background:#12242f;border:1px solid var(--line)}}
+  .cta h2{font-family:"Fraunces",serif;font-weight:600;font-size:22px;margin:0 0 8px;color:#fff;text-wrap:balance}
+  .cta p{margin:0 0 16px;color:#cdd8e1;font-size:14px;max-width:60ch}
+  .cta .btns{display:flex;gap:12px;flex-wrap:wrap}
+  .cta a.primary{background:var(--teal);color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 22px;border-radius:11px;display:inline-block}
+  .cta a.secondary{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 20px;border-radius:11px;border:1px solid rgba(255,255,255,.35);display:inline-block}
+
+  footer{padding:26px 0 54px;color:var(--mut);font-size:11.5px;line-height:1.6;border-top:1px solid var(--line);margin-top:26px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="brand"><span class="dot"></span> IP Axix</div>
+    <h1>Your patent portfolio, <em>checked in seconds.</em></h1>
+    <p class="lede">Paste your US patent or application numbers. We pull the live record and show every upcoming deadline and a portfolio health score — free, no signup, nothing saved.</p>
+  </header>
+
+  <section class="panel inputcard">
+    <label class="field" for="pn">Patent / application numbers</label>
+    <textarea id="pn" spellcheck="false" placeholder="e.g.  US 10,000,000&#10;9,625,667&#10;16/803,114"></textarea>
+    <div class="row">
+      <button class="go" id="run">Run my free audit</button>
+      <button class="ghost" id="share" hidden>Copy shareable link</button>
+      <span class="hint"><b>Up to 20 numbers.</b> Grant numbers or application serials. US today — EP in the full tool.</span>
+    </div>
+  </section>
+
+  <div id="status" hidden></div>
+
+  <main id="results" hidden>
+    <section class="panel scorecard">
+      <div class="gauge">
+        <svg width="104" height="104" viewBox="0 0 104 104">
+          <circle cx="52" cy="52" r="44" fill="none" stroke="var(--line)" stroke-width="10"></circle>
+          <circle id="ring" cx="52" cy="52" r="44" fill="none" stroke="var(--accent)" stroke-width="10"
+            stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"></circle>
+        </svg>
+        <div class="val"><b id="scoreNum">—</b><span>Health</span></div>
+      </div>
+      <div class="scoretext">
+        <h2 id="scoreHead">Portfolio health</h2>
+        <p id="scoreSub"></p>
+      </div>
+    </section>
+
+    <div class="tiles" id="tiles"></div>
+
+    <div class="plist" id="plist"></div>
+
+    <ul class="notes" id="notes" hidden></ul>
+
+    <section class="cta">
+      <h2>Never chase these dates by hand again.</h2>
+      <p>This snapshot is a one-time look. In the full tool your whole portfolio — US and European — stays synced, every deadline is monitored, and you get reminders before anything is at risk.</p>
+      <div class="btns">
+        <a class="primary" id="ctaStart" href="#">Start monitoring free</a>
+        <a class="secondary" id="ctaDemo" href="#">Book a 20-min walkthrough</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>How to read this:</strong> deadlines are calculated from the public patent-office record and standard prosecution rules. Dates marked <span class="mono">est</span> are approximate. This is a convenience snapshot, not legal advice — always verify against the official record and confirm any critical date with your patent attorney.</p>
+    <p class="mono">IP Axix · Free Instant Audit · nothing you enter here is stored.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var FN  = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/free-audit";
+  var KEY = "sb_publishable_dQBbAXx5l_buD3m-HQieTA_UBQA125h";
+  // Point these wherever sign-up / booking should go:
+  var SIGNUP_URL = "https://patent-platform.vercel.app";
+  var DEMO_URL   = "mailto:hello@ipaxix.online?subject=IP%20Axix%20walkthrough";
+
+  var $ = function(id){ return document.getElementById(id); };
+  document.getElementById("ctaStart").href = SIGNUP_URL;
+  document.getElementById("ctaDemo").href  = DEMO_URL;
+
+  function parseList(s){
+    return (s||"").split(/[\s,;\n]+/).map(function(x){return x.trim();}).filter(Boolean).slice(0,20);
+  }
+  function fmtDate(d){
+    if(!d) return "";
+    var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    var p=String(d).split("-"); if(p.length<3) return d;
+    return p[2].replace(/^0/,"")+" "+m[(+p[1])-1]+" "+p[0];
+  }
+  var STATE_LABEL={overdue:"Overdue",soon:"Due soon",upcoming:"This year",future:"Scheduled"};
+
+  function badge(label){
+    var cls="b-none";
+    if(/granted/i.test(label)) cls="b-granted";
+    else if(/pending/i.test(label)) cls="b-pending";
+    else if(/abandon|lapsed/i.test(label)) cls="b-dead";
+    return '<span class="badge '+cls+'">'+esc(label)+'</span>';
+  }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+
+  function render(data){
+    // score gauge
+    var score = Math.max(0,Math.min(100, data.score||0));
+    var ring = $("ring"), C = 2*Math.PI*44;
+    ring.setAttribute("stroke-dasharray", C.toFixed(1));
+    ring.setAttribute("stroke-dashoffset", (C*(1-score/100)).toFixed(1));
+    var col = score>=80 ? "var(--green)" : score>=60 ? "var(--amber)" : "var(--red)";
+    ring.setAttribute("stroke", col);
+    $("scoreNum").textContent = score;
+    $("scoreNum").style.color = col;
+    var s = data.summary||{};
+    var head, sub;
+    if(s.overdue>0){ head="Action needed"; sub=s.overdue+" deadline"+(s.overdue>1?"s are":" is")+" already overdue in this set — the kind of thing that quietly abandons a granted right."; }
+    else if(s.dueWithin90Days>0){ head="Watch the next 90 days"; sub=s.dueWithin90Days+" deadline"+(s.dueWithin90Days>1?"s fall":" falls")+" within 90 days. Worth diarising now."; }
+    else if((s.dueWithin12Months||0)>0){ head="In good shape"; sub="Nothing urgent — "+s.dueWithin12Months+" deadline"+(s.dueWithin12Months>1?"s":"")+" to plan for over the coming year."; }
+    else { head="All clear for now"; sub="No deadlines surfaced in the near term for the numbers you entered."; }
+    $("scoreHead").textContent = head; $("scoreSub").textContent = sub;
+
+    // tiles
+    var tiles=[
+      ["total","Patents checked",""],
+      ["granted","Granted","ok"],
+      ["pending","Pending",""],
+      ["overdue","Overdue","warn"],
+      ["dueWithin90Days","Due in 90 days","soon"],
+      ["dueWithin12Months","Due in 12 months",""]
+    ];
+    $("tiles").innerHTML = tiles.map(function(t){
+      var v=s[t[0]]||0; if(t[0]==="total") v=(data.patents||[]).length;
+      return '<div class="tile '+(t[2]&&v>0?t[2]:"")+'"><b>'+v+'</b><span>'+t[1]+'</span></div>';
+    }).join("");
+
+    // per patent
+    $("plist").innerHTML = (data.patents||[]).map(function(p){
+      var head='<div class="top"><span class="pid">'+esc(p.display||p.id)+'</span>'+
+               '<span class="pt">'+esc(p.title||"")+'</span>'+badge(p.statusLabel||"")+'</div>';
+      var body;
+      if(p.deadlines && p.deadlines.length){
+        body = p.deadlines.map(function(d){
+          return '<div class="dl d-'+d.state+'"><span class="stripe s-'+d.state+'"></span>'+
+            '<div class="dmain"><div class="dtype">'+esc(d.type)+(d.est?'<span class="est">est</span>':'')+'</div>'+
+            '<div class="dnote">'+esc(d.note||"")+'</div></div>'+
+            '<div class="ddate">'+fmtDate(d.due)+'<small>'+(STATE_LABEL[d.state]||"")+'</small></div></div>';
+        }).join("");
+      } else if(/granted|pending/i.test(p.statusLabel||"")){
+        body = '<div class="clean">No deadlines in the near-term window. In the full tool this stays monitored so new ones surface automatically.</div>';
+      } else {
+        body = '<div class="clean" style="color:var(--mut)">'+esc(p.statusLabel||"Not audited")+'.</div>';
+      }
+      return '<div class="pat">'+head+body+'</div>';
+    }).join("");
+
+    // notes
+    if(data.notes && data.notes.length){
+      $("notes").hidden=false;
+      $("notes").innerHTML = data.notes.map(function(n){ return "<li>"+esc(n)+"</li>"; }).join("");
+    } else { $("notes").hidden=true; }
+
+    $("results").hidden=false;
+    $("share").hidden=false;
+  }
+
+  function setStatus(html){ var el=$("status"); if(!html){ el.hidden=true; el.innerHTML=""; } else { el.hidden=false; el.innerHTML=html; } }
+
+  async function run(){
+    var list = parseList($("pn").value);
+    if(!list.length){ setStatus("Enter at least one patent number above."); return; }
+    $("run").disabled=true; setStatus('<span class="spin"></span>Pulling the live record and calculating deadlines — this can take up to a minute…');
+    $("results").hidden=true;
+    try{
+      var r = await fetch(FN, { method:"POST",
+        headers:{ "Content-Type":"application/json", "apikey":KEY },
+        body: JSON.stringify({ patents:list }) });
+      var data = await r.json();
+      if(!data || !data.ok){ setStatus("Sorry — "+((data&&data.error)||("something went wrong (HTTP "+r.status+")."))); $("run").disabled=false; return; }
+      setStatus("");
+      render(data);
+      try{ location.replace("#p="+encodeURIComponent(list.join(","))); }catch(_e){}
+      $("results").scrollIntoView({behavior:"smooth",block:"start"});
+    }catch(e){
+      setStatus("Sorry — the audit service could not be reached. Please try again in a moment.");
+    }
+    $("run").disabled=false;
+  }
+
+  $("run").addEventListener("click", run);
+  $("pn").addEventListener("keydown", function(e){ if((e.metaKey||e.ctrlKey)&&e.key==="Enter") run(); });
+  $("share").addEventListener("click", function(){
+    var url = location.href.split("#")[0] + "#p=" + encodeURIComponent(parseList($("pn").value).join(","));
+    var done=function(){ $("share").textContent="Link copied ✓"; setTimeout(function(){ $("share").textContent="Copy shareable link"; },1800); };
+    if(navigator.clipboard){ navigator.clipboard.writeText(url).then(done, done); } else { done(); }
+  });
+
+  // Prefill from a shared link, else show worked examples so the page opens live.
+  var m = (location.hash||"").match(/p=([^&]+)/);
+  if(m){ try{ $("pn").value = decodeURIComponent(m[1]).split(",").join("\n"); }catch(_e){} run(); }
+  else { $("pn").value = "10000000\n9625667\n7654321"; run(); }
+})();
+</script>
+</body>
+</html>

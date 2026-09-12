@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>US Maintenance Fee Estimator — IP Axix</title>
+<meta name="description" content="Enter a US patent number to see its maintenance-fee schedule and amounts (3.5, 7.5, 11.5 years) for large, small and micro entities. Free, from IP Axix.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="tools.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="dot"></span> IP Axix</a>
+    <div class="navlinks">
+      <a href="/">Portfolio Audit</a>
+      <a href="/in-force">In-force check</a>
+      <a href="/expiry">Expiry</a>
+      <a href="/annuity" class="on">Maintenance fees</a>
+    </div>
+  </nav>
+  <header class="mast">
+    <h1>What will your US <em>maintenance fees</em> cost?</h1>
+    <p class="lede">Enter one or more granted US patents and see the full maintenance-fee schedule — the 3.5-, 7.5- and 11.5-year dates and amounts, with the next one due highlighted. Free.</p>
+  </header>
+
+  <section class="panel inputcard">
+    <label class="field" for="pn">Patent / application numbers</label>
+    <textarea id="pn" spellcheck="false" placeholder="e.g.  US 9,625,667"></textarea>
+    <div class="row">
+      <button class="go" id="run">Estimate fees</button>
+      <button class="ghost" id="share" hidden>Copy shareable link</button>
+      <span class="hint"><b>Up to 20 numbers.</b> USPTO schedule effective Jan 2025.</span>
+    </div>
+  </section>
+
+  <div id="status" hidden></div>
+
+  <main id="results" hidden>
+    <div class="plist" id="plist"></div>
+    <div class="capture" id="capture" hidden></div>
+    <section class="cta">
+      <h2>Never miss a fee — or a patent.</h2>
+      <p>A missed maintenance fee abandons a granted patent. In the full tool we track every fee across your portfolio and remind you well before each due date.</p>
+      <div class="btns"><a class="primary" id="ctaStart" href="#">Start monitoring free</a><a class="secondary" id="ctaDemo" href="#">Book a 20-min walkthrough</a></div>
+    </section>
+    <div class="more">
+      <h3>More free tools</h3>
+      <div class="grid">
+        <a href="/"><b>Full portfolio audit</b><span>Every deadline + a health score.</span></a>
+        <a href="/in-force"><b>Is my patent in force?</b><span>Live status for any US patent.</span></a>
+        <a href="/expiry"><b>Patent expiry calculator</b><span>When a patent's term runs out.</span></a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p><strong>How to read this:</strong> amounts are the current USPTO maintenance fees (effective 19 Jan 2025) for large, small and micro entities, shown by stage; a 6-month grace period with surcharge applies after each date. Which entity size applies depends on your status. Not legal advice; confirm with your patent attorney.</p>
+    <p class="mono">IP Axix · nothing you enter here is stored.</p>
+  </footer>
+</div>
+<script src="tools.js"></script>
+<script>IPAX.init({ mode:"annuity", tool:"annuity", examples:"9625667" });</script>
+</body>
+</html>

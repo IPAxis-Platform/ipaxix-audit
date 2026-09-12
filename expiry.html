@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patent Expiry Calculator — IP Axix</title>
+<meta name="description" content="Enter a US patent number and get its estimated expiry date and remaining term. Free patent expiry calculator from IP Axix.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="tools.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="dot"></span> IP Axix</a>
+    <div class="navlinks">
+      <a href="/">Portfolio Audit</a>
+      <a href="/in-force">In-force check</a>
+      <a href="/expiry" class="on">Expiry</a>
+      <a href="/annuity">Maintenance fees</a>
+    </div>
+  </nav>
+  <header class="mast">
+    <h1>When does your patent <em>expire?</em></h1>
+    <p class="lede">Enter one or more US patent numbers for an estimated expiry date and how much term is left — calculated from the filing date. Free.</p>
+  </header>
+
+  <section class="panel inputcard">
+    <label class="field" for="pn">Patent / application numbers</label>
+    <textarea id="pn" spellcheck="false" placeholder="e.g.  US 9,625,667&#10;10,000,000"></textarea>
+    <div class="row">
+      <button class="go" id="run">Calculate expiry</button>
+      <button class="ghost" id="share" hidden>Copy shareable link</button>
+      <span class="hint"><b>Up to 20 numbers.</b> Estimate excludes term adjustment &amp; terminal disclaimers.</span>
+    </div>
+  </section>
+
+  <div id="status" hidden></div>
+
+  <main id="results" hidden>
+    <div class="plist" id="plist"></div>
+    <div class="capture" id="capture" hidden></div>
+    <section class="cta">
+      <h2>Track term and every deadline in one place.</h2>
+      <p>Expiry is only half the picture — maintenance fees keep a patent alive until then. In the full tool your whole portfolio stays monitored, with reminders before every deadline.</p>
+      <div class="btns"><a class="primary" id="ctaStart" href="#">Start monitoring free</a><a class="secondary" id="ctaDemo" href="#">Book a 20-min walkthrough</a></div>
+    </section>
+    <div class="more">
+      <h3>More free tools</h3>
+      <div class="grid">
+        <a href="/"><b>Full portfolio audit</b><span>Every deadline + a health score.</span></a>
+        <a href="/in-force"><b>Is my patent in force?</b><span>Live status for any US patent.</span></a>
+        <a href="/annuity"><b>Maintenance-fee estimator</b><span>What the USPTO fees will cost.</span></a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p><strong>How to read this:</strong> the expiry date is an <em>estimate</em> — 20 years from the application's filing date — and does not include patent-term adjustment (PTA/PTE) or any terminal disclaimer, which can move the real date. Not legal advice; confirm with your patent attorney.</p>
+    <p class="mono">IP Axix · nothing you enter here is stored.</p>
+  </footer>
+</div>
+<script src="tools.js"></script>
+<script>IPAX.init({ mode:"expiry", tool:"expiry", examples:"9625667\n10000000" });</script>
+</body>
+</html>

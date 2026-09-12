@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is My Patent Still In Force? — IP Axix</title>
+<meta name="description" content="Enter a US patent number and instantly see whether it's still in force, when it expires, and the next maintenance fee. Free, from IP Axix.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="tools.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="dot"></span> IP Axix</a>
+    <div class="navlinks">
+      <a href="/">Portfolio Audit</a>
+      <a href="/in-force" class="on">In-force check</a>
+      <a href="/expiry">Expiry</a>
+      <a href="/annuity">Maintenance fees</a>
+    </div>
+  </nav>
+  <header class="mast">
+    <h1>Is your patent <em>still in force?</em></h1>
+    <p class="lede">Enter one or more US patent numbers. We check the live USPTO record and tell you whether each is in force, when it expires, and the next maintenance fee — free.</p>
+  </header>
+
+  <section class="panel inputcard">
+    <label class="field" for="pn">Patent / application numbers</label>
+    <textarea id="pn" spellcheck="false" placeholder="e.g.  US 9,625,667&#10;10,000,000"></textarea>
+    <div class="row">
+      <button class="go" id="run">Check status</button>
+      <button class="ghost" id="share" hidden>Copy shareable link</button>
+      <span class="hint"><b>Up to 20 numbers.</b> Grant, application, or publication numbers. US patents.</span>
+    </div>
+  </section>
+
+  <div id="status" hidden></div>
+
+  <main id="results" hidden>
+    <div class="plist" id="plist"></div>
+    <div class="capture" id="capture" hidden></div>
+    <section class="cta">
+      <h2>Keep an eye on these automatically.</h2>
+      <p>A patent stays in force only while its fees are paid. In the full tool we monitor status and every maintenance fee for your whole portfolio and remind you before each one is due.</p>
+      <div class="btns"><a class="primary" id="ctaStart" href="#">Start monitoring free</a><a class="secondary" id="ctaDemo" href="#">Book a 20-min walkthrough</a></div>
+    </section>
+    <div class="more">
+      <h3>More free tools</h3>
+      <div class="grid">
+        <a href="/"><b>Full portfolio audit</b><span>Every deadline + a health score.</span></a>
+        <a href="/expiry"><b>Patent expiry calculator</b><span>When a patent's term runs out.</span></a>
+        <a href="/annuity"><b>Maintenance-fee estimator</b><span>What the USPTO fees will cost.</span></a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p><strong>How to read this:</strong> status and dates come from the public patent-office record. Expiry is an estimate (excludes patent-term adjustment and any terminal disclaimer). This is a convenience check, not legal advice — verify against the official record and confirm with your patent attorney.</p>
+    <p class="mono">IP Axix · nothing you enter here is stored.</p>
+  </footer>
+</div>
+<script src="tools.js"></script>
+<script>IPAX.init({ mode:"inforce", tool:"inforce", examples:"9625667\n7654321" });</script>
+</body>
+</html>

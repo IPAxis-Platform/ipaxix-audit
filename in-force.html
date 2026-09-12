@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Is My Patent Still In Force? — IP Axix</title>
-<meta name="description" content="Enter a US patent number and instantly see whether it's still in force, when it expires, and the next maintenance fee. Free, from IP Axix.">
+<title>When Is My Next Patent Deadline? — IP Axix</title>
+<meta name="description" content="Enter a US patent number and instantly see its next deadline — office-action response, issue fee, maintenance fee or renewal — plus status and estimated expiry. Free, from IP Axix.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -16,21 +16,21 @@
     <a class="brand" href="https://ipaxix.online"><span class="logo"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IP Axix"><defs><linearGradient id="ipxT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#264C74"/><stop offset="1" stop-color="#14273F"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="url(#ipxT)"/><polyline points="18,41 32,29 46,41" fill="none" stroke="#EAF1F8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><polyline points="18,30 32,18 46,30" fill="none" stroke="#18B8A6" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span> IP Axix</a>
     <div class="navlinks">
       <a href="/">Portfolio Audit</a>
-      <a href="/in-force" class="on">In-force check</a>
+      <a href="/in-force" class="on">Next deadline</a>
       <a href="/expiry">Expiry</a>
       <a href="/annuity">Maintenance fees</a>
     </div>
   </nav>
   <header class="mast">
-    <h1>Is your patent <em>still in force?</em></h1>
-    <p class="lede">Enter one or more US patent numbers. We check the live USPTO record and tell you whether each is in force, when it expires, and the next maintenance fee — free.</p>
+    <h1>When is your <em>next deadline?</em></h1>
+    <p class="lede">Enter one or more US patent numbers. We check the live USPTO record and show the next deadline on each — office-action response, issue fee, maintenance fee or renewal — with status and estimated expiry. Free.</p>
   </header>
 
   <section class="panel inputcard">
     <label class="field" for="pn">Patent / application numbers</label>
     <textarea id="pn" spellcheck="false" placeholder="e.g.  US 9,625,667&#10;10,000,000"></textarea>
     <div class="row">
-      <button class="go" id="run">Check status</button>
+      <button class="go" id="run">Find my next deadline</button>
       <button class="ghost" id="share" hidden>Copy shareable link</button>
       <span class="hint"><b>Up to 20 numbers.</b> Grant, application, or publication numbers. US patents.</span>
     </div>
@@ -62,6 +62,6 @@
   </footer>
 </div>
 <script src="tools.js"></script>
-<script>IPAX.init({ mode:"inforce", tool:"inforce", examples:"9625667\n7654321" });</script>
+<script>IPAX.init({ mode:"nextdeadline", tool:"nextdeadline", examples:"9625667\n7654321" });</script>
 </body>
 </html>

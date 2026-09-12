@@ -50,23 +50,23 @@
     }).join("");
   }
 
-  function renderInforce(data){
+  function dlRow(d){ return '<div class="dl d-'+d.state+'"><span class="stripe s-'+d.state+'"></span><div class="dmain"><div class="dtype">'+esc(d.type)+(d.est?'<span class="est">est</span>':'')+'</div><div class="dnote">'+esc(d.note||"")+'</div></div><div class="ddate">'+fmtDate(d.due)+'<small>'+(STATE_LABEL[d.state]||"")+'</small></div></div>'; }
+  function renderNextDeadline(data){
     $("plist").innerHTML=(data.patents||[]).map(function(p){
       var head='<div class="top"><span class="pid">'+esc(p.display||p.id)+'</span><span class="pt">'+esc(p.title||"")+'</span>'+badge(p.statusLabel||"")+'</div>';
-      var rows="";
-      var inforce=/granted/i.test(p.statusLabel||"");
-      if(inforce){
-        rows+='<div class="fact"><div class="fcol"><span class="fbig" style="color:var(--green)">In force</span><span class="flab">Live &amp; enforceable</span></div>'+
-              (p.expiryEst?'<div class="fcol rt"><span class="fbig">~'+fmtDate(p.expiryEst)+'</span><span class="flab">Estimated expiry</span></div>':'')+'</div>';
-        var mf=nextMaint(p);
-        if(mf){ var amt=mf.feeUSD?(" · "+money(mf.feeUSD.large)+" large entity"):""; rows+='<div class="fact"><div class="fcol"><span class="fbig" style="font-size:16px">'+fmtDate(mf.due)+'</span><span class="flab">Next maintenance fee</span></div><div class="fcol rt"><span class="flab">'+esc(mf.type)+amt+'</span></div></div>'; }
-        else { rows+='<div class="fact"><span class="flab">No maintenance fee due in the near-term window.</span></div>'; }
+      var dls=(p.deadlines||[]); var body;
+      if(dls.length){
+        var n=dls[0];
+        var col=n.state==="overdue"?"var(--red)":n.state==="soon"?"var(--amber)":"var(--accent)";
+        body='<div class="fact"><div class="fcol"><span class="flab">Next deadline</span><span class="fbig" style="color:'+col+'">'+fmtDate(n.due)+'</span></div>'+
+             '<div class="fcol rt"><span class="fbig" style="font-size:16px">'+esc(n.type)+'</span><span class="flab">'+(STATE_LABEL[n.state]||"")+(p.expiryEst?" · est. expiry ~"+fmtDate(p.expiryEst):"")+'</span></div></div>';
+        if(dls.length>1){ body+='<div>'+dls.slice(1).map(dlRow).join("")+'</div>'; }
+      } else if(/granted/i.test(p.statusLabel||"")){
+        body='<div class="fact"><div class="fcol"><span class="fbig" style="color:var(--green)">No deadline coming up</span><span class="flab">In force'+(p.expiryEst?" · est. expiry ~"+fmtDate(p.expiryEst):"")+' — nothing due in the near-term window</span></div></div>';
       } else if(/pending/i.test(p.statusLabel||"")){
-        rows+='<div class="fact"><div class="fcol"><span class="fbig" style="color:var(--blue)">Pending</span><span class="flab">Application still in examination — not yet an enforceable right</span></div></div>';
-      } else if(/abandon|lapsed/i.test(p.statusLabel||"")){
-        rows+='<div class="fact"><div class="fcol"><span class="fbig" style="color:var(--red)">Not in force</span><span class="flab">Abandoned / lapsed on the public record</span></div></div>';
-      } else { rows+='<div class="clean" style="color:var(--mut)">'+esc(p.statusLabel||"")+'.</div>'; }
-      return '<div class="pat">'+head+rows+'</div>';
+        body='<div class="fact"><div class="fcol"><span class="fbig" style="color:var(--blue)">Pending</span><span class="flab">In examination — no docketed deadline in the near-term window</span></div></div>';
+      } else { body='<div class="clean" style="color:var(--mut)">'+esc(p.statusLabel||"")+'.</div>'; }
+      return '<div class="pat">'+head+body+'</div>';
     }).join("");
   }
 
@@ -104,7 +104,7 @@
   }
   function addYears(iso,y){ var d=new Date(iso+"T00:00:00Z"); if(isNaN(d.getTime()))return ""; d.setUTCMonth(d.getUTCMonth()+Math.round(y*12)); return d.toISOString().slice(0,10); }
 
-  var RENDER={audit:renderAudit,inforce:renderInforce,expiry:renderExpiry,annuity:renderAnnuity};
+  var RENDER={audit:renderAudit,nextdeadline:renderNextDeadline,inforce:renderNextDeadline,expiry:renderExpiry,annuity:renderAnnuity};
 
   function setStatus(html){ var el=$("status"); if(!html){el.hidden=true;el.innerHTML="";}else{el.hidden=false;el.innerHTML=html;} }
 

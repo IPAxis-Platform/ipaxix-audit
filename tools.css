@@ -29,9 +29,10 @@ a{color:var(--blue)}
 
 /* nav */
 .topnav{display:flex;align-items:center;gap:8px 20px;flex-wrap:wrap;padding:16px 0 0}
-.brand{display:flex;align-items:center;gap:10px;font-family:"IBM Plex Mono",monospace;font-weight:600;
+.brand{display:flex;align-items:center;gap:9px;font-family:"IBM Plex Mono",monospace;font-weight:600;
   letter-spacing:.14em;text-transform:uppercase;font-size:12.5px;color:var(--accent);text-decoration:none}
-.brand .dot{width:9px;height:9px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+.brand .logo{display:inline-flex;line-height:0}
+.brand .logo svg{width:26px;height:26px;border-radius:7px;display:block}
 .navlinks{display:flex;gap:4px 16px;flex-wrap:wrap;margin-left:auto;font-size:12.5px}
 .navlinks a{color:var(--ink-soft);text-decoration:none;padding:3px 0}
 .navlinks a:hover{color:var(--accent)}

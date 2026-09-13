@@ -8,8 +8,8 @@
   var KEY = "sb_publishable_dQBbAXx5l_buD3m-HQieTA_UBQA125h";
   // The platform is invite-only (set up personally after a walkthrough) — the free tools
   // NEVER link into the app. Every "get set up" / "book" CTA routes to the scheduling link.
-  // ↓↓↓ SCHEDULING LINK — replace with your own Calendly / Cal.com link (e.g. https://calendly.com/your-name/20min).
-  var BOOK_URL   = "https://calendly.com/ipaxix/intro-call";
+  // ↓↓↓ SCHEDULING LINK — replace with your own Calendly / Cal.com link (e.g. https://cal.com/your-name/20min).
+  var BOOK_URL   = "https://cal.com/ipaxix/20min";
   var SIGNUP_URL = BOOK_URL;
   var DEMO_URL   = BOOK_URL;
   // USPTO maintenance-fee schedule (eff. 19 Jan 2025) — [large, small, micro].

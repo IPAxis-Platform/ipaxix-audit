@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patent Strength Grade — IP Axix</title>
+<meta name="description" content="Get an instant A–F strength grade for any patent — based on how often it's cited, how much term is left, and its legal status. Free, from IP Axix.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="tools.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="topnav">
+    <a class="brand" href="https://ipaxix.online"><span class="logo"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IP Axix"><defs><linearGradient id="ipxT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#264C74"/><stop offset="1" stop-color="#14273F"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="url(#ipxT)"/><polyline points="18,41 32,29 46,41" fill="none" stroke="#EAF1F8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><polyline points="18,30 32,18 46,30" fill="none" stroke="#18B8A6" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span> IP Axix</a>
+    <div class="navlinks">
+      <a href="/">Portfolio Audit</a>
+      <a href="/in-force">Next deadline</a>
+      <a href="/expiry">Expiry</a>
+      <a href="/annuity">Maintenance fees</a>
+      <a href="/forecast">Cost forecast</a>
+      <a href="/grade" class="on">Strength grade</a>
+    </div>
+  </nav>
+  <header class="mast">
+    <h1>How strong is your <em>patent?</em></h1>
+    <p class="lede">Get an instant A–F grade for any patent — from how often it's been cited by later patents, how much protection term is left, and its legal status. Free, no signup.</p>
+  </header>
+
+  <section class="panel inputcard">
+    <label class="field" for="pn">Patent numbers</label>
+    <textarea id="pn" spellcheck="false" placeholder="e.g.  US 9,625,667&#10;10,000,000&#10;EP4254027"></textarea>
+    <div class="row">
+      <button class="go" id="run">Grade my patents</button>
+      <button class="ghost" id="share" hidden>Copy shareable link</button>
+      <span class="hint"><b>Up to 8 patents.</b> Works best on granted US &amp; European patents.</span>
+    </div>
+  </section>
+
+  <div id="status" hidden></div>
+
+  <main id="results" hidden>
+    <div class="plist" id="plist"></div>
+    <section class="cta">
+      <h2>Know your whole portfolio's strength.</h2>
+      <p>A grade on one patent is a start. In the full tool you see strength, deadlines and competitor citations across your entire portfolio — kept current automatically.</p>
+      <div class="btns"><a class="primary" id="ctaStart" href="#">Start free</a><a class="secondary" id="ctaDemo" href="#">Book a 20-min walkthrough</a></div>
+    </section>
+    <div class="more">
+      <h3>More free tools</h3>
+      <div class="grid">
+        <a href="/"><b>Full portfolio audit</b><span>Every deadline + a health score.</span></a>
+        <a href="/forecast"><b>Renewal cost forecast</b><span>What it costs to keep them alive.</span></a>
+        <a href="/expiry"><b>Patent expiry calculator</b><span>When a patent's term runs out.</span></a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p><strong>How to read this:</strong> the grade is an <em>indicative</em> signal built from public-record data — the number of later patents that cite this one (a common proxy for influence/value), how many years of term remain, and the legal status. Forward-citation counts come from the EPO's public database and can lag or undercount very recent citations. It is not a valuation, a validity opinion, or legal advice — treat it as a conversation-starter and confirm anything important with your patent attorney.</p>
+    <p><strong>Privacy:</strong> the numbers you check aren't linked to you and are never sold; we briefly cache public-record results to speed up repeat lookups.</p>
+    <p class="mono">IP Axix · free tools</p>
+  </footer>
+</div>
+<script src="tools.js"></script>
+<script>IPAX.init({ mode:"grade", tool:"grade", examples:"9625667\n10000000" });</script>
+</body>
+</html>

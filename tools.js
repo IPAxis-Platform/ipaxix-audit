@@ -3,6 +3,7 @@
   var FN  = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/free-audit";
   var CAP = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/capture-lead";
   var EMAIL = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/email-deadlines";
+  var GRADE = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/patent-grade";
   var KEY = "sb_publishable_dQBbAXx5l_buD3m-HQieTA_UBQA125h";
   // Point these where sign-up / booking should go:
   var SIGNUP_URL = "https://patent-platform.vercel.app";
@@ -105,7 +106,71 @@
   }
   function addYears(iso,y){ var d=new Date(iso+"T00:00:00Z"); if(isNaN(d.getTime()))return ""; d.setUTCMonth(d.getUTCMonth()+Math.round(y*12)); return d.toISOString().slice(0,10); }
 
-  var RENDER={audit:renderAudit,nextdeadline:renderNextDeadline,inforce:renderNextDeadline,expiry:renderExpiry,annuity:renderAnnuity};
+  // ---- renewal / maintenance-cost forecast (portfolio roll-up) ----
+  var _lastData=null, _entity="large";
+  var ENT_LABEL={large:"Large entity",small:"Small entity",micro:"Micro entity"};
+  function renderForecast(data){
+    _lastData=data;
+    var selEl=$("entity"); if(selEl&&selEl.value) _entity=selEl.value;
+    var today=new Date().toISOString().slice(0,10);
+    var items=[], epRows=[], noSchedule=0;
+    (data.patents||[]).forEach(function(p){
+      var granted=/granted/i.test(p.statusLabel||"");
+      if(granted && p.jurisdiction==="US" && p.grantDate){
+        [["3.5","4th (3.5-yr)"],["7.5","8th (7.5-yr)"],["11.5","12th (11.5-yr)"]].forEach(function(st){
+          var due=addYears(p.grantDate, parseFloat(st[0])); if(due>=today){ var f=FEE[st[0]]; items.push({due:due,pid:p.display||p.id,title:p.title||"",stage:st[1],fee:f?f[_entity]:0}); }
+        });
+      } else if(granted && p.jurisdiction==="EP"){
+        var nd=(p.deadlines||[]).filter(function(d){return /renewal/i.test(d.type);})[0];
+        epRows.push({pid:p.display||p.id, next:nd?nd.due:null});
+      } else { noSchedule++; }
+    });
+    items.sort(function(a,b){return String(a.due).localeCompare(String(b.due));});
+    var total=items.reduce(function(t,x){return t+(x.fee||0);},0);
+    var byYear={}; items.forEach(function(x){ var y=x.due.slice(0,4); if(!byYear[y]) byYear[y]={sum:0,rows:[]}; byYear[y].sum+=x.fee||0; byYear[y].rows.push(x); });
+    var years=Object.keys(byYear).sort();
+    var out='';
+    out+='<div class="scorecard panel" style="align-items:center">'+
+      '<div class="scoretext"><h2 style="margin:0">Estimated US maintenance-fee spend</h2>'+
+      '<p style="margin:4px 0 0">Over the next ~12 years, keeping these granted US patents alive will cost about <b style="color:var(--ink,#14273F)">'+money(total)+'</b> in official USPTO fees ('+ENT_LABEL[_entity]+', excludes attorney charges &amp; late surcharges).</p></div>'+
+      '<div class="val" style="text-align:right"><b style="font-size:26px">'+money(total)+'</b><span>'+items.length+' fee'+(items.length===1?'':'s')+'</span></div></div>';
+    if(years.length){
+      out+='<div class="plist">'+years.map(function(y){
+        var rows=byYear[y].rows.map(function(x){
+          return '<div class="dl d-upcoming"><span class="stripe s-upcoming"></span><div class="dmain"><div class="dtype">'+esc(x.stage)+' maintenance fee <span style="color:var(--mut)">· '+esc(x.pid)+'</span></div><div class="dnote">'+esc(x.title)+'</div></div><div class="ddate">'+fmtDate(x.due)+'<small>'+money(x.fee)+'</small></div></div>';
+        }).join("");
+        return '<div class="pat"><div class="top"><span class="pid">'+y+'</span><span class="pt">'+byYear[y].rows.length+' fee'+(byYear[y].rows.length===1?'':'s')+' due</span><span class="badge b-granted">'+money(byYear[y].sum)+'</span></div>'+rows+'</div>';
+      }).join("")+'</div>';
+    } else {
+      out+='<div class="plist"><div class="pat"><div class="fact"><span class="flab">No upcoming US maintenance fees for the granted patents you entered (all future stages may already be past, or none are granted US patents).</span></div></div></div>';
+    }
+    var extra=[];
+    if(epRows.length) extra.push(epRows.length+' European patent'+(epRows.length===1?'':'s')+' also carry annual renewal fees'+(epRows.filter(function(r){return r.next;}).length?(' (next dates: '+epRows.filter(function(r){return r.next;}).map(function(r){return esc(r.pid)+' '+fmtDate(r.next);}).join(', ')+')'):'')+' — EPO/national renewal amounts vary by country and year, so they are not included in this US estimate.');
+    if(noSchedule) extra.push(noSchedule+' entered item'+(noSchedule===1?'':'s')+' had no maintenance schedule (pending, unpublished, or not a granted patent).');
+    if(extra.length) out+='<div class="panel" style="margin-top:14px"><div style="font-size:12.5px;color:var(--mut);line-height:1.6">'+extra.map(function(t){return '• '+t;}).join('<br>')+'</div></div>';
+    $("plist").innerHTML=out;
+  }
+
+  // ---- patent strength grade ----
+  function renderGrade(data){
+    $("plist").innerHTML=(data.patents||[]).map(function(p){
+      var g=p.grade||"—";
+      var col=(g==="A"||g==="B")?"var(--green)":(g==="C")?"var(--amber)":(g==="—")?"var(--mut)":"var(--red)";
+      var head='<div class="top"><span class="pid">'+esc(p.display)+'</span><span class="pt">'+esc(p.title||"")+'</span>'+badge(p.statusLabel||"")+'</div>';
+      var circle='<div style="display:flex;align-items:center;gap:16px;margin:8px 0 4px">'+
+        '<div style="flex:0 0 auto;width:68px;height:68px;border-radius:50%;border:3px solid '+col+';display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:'+col+'">'+esc(g)+'</div>'+
+        '<div style="min-width:0"><div style="font-size:16px;font-weight:700;color:'+col+'">'+esc(p.headline||"")+'</div>'+
+          '<div style="font-size:12.5px;color:var(--mut);line-height:1.5;margin-top:2px">'+esc(p.note||"")+'</div></div></div>';
+      var sig=p.signals||{}, facts='';
+      if(sig.citations!=null || sig.yearsLeft!=null){
+        facts='<div class="fact"><div class="fcol"><span class="flab">Cited by (forward citations)</span><span class="fbig">'+(sig.citations!=null?sig.citations:"—")+(sig.citationsPerYear!=null?(' <span style="font-size:12px;color:var(--mut)">~'+sig.citationsPerYear+'/yr</span>'):'')+'</span></div>'+
+          '<div class="fcol rt"><span class="flab">Term left</span><span class="fbig">'+(sig.yearsLeft!=null?(sig.yearsLeft+" yrs"):"—")+'</span></div></div>';
+      }
+      return '<div class="pat">'+head+circle+facts+'</div>';
+    }).join("");
+  }
+
+  var RENDER={audit:renderAudit,nextdeadline:renderNextDeadline,inforce:renderNextDeadline,expiry:renderExpiry,annuity:renderAnnuity,forecast:renderForecast,grade:renderGrade};
 
   function setStatus(html){ var el=$("status"); if(!html){el.hidden=true;el.innerHTML="";}else{el.hidden=false;el.innerHTML=html;} }
 
@@ -131,16 +196,17 @@
   function run(){
     var list=parseList($("pn").value);
     if(!list.length){ setStatus("Enter at least one patent number above."); return; }
-    $("run").disabled=true; setStatus('<span class="spin"></span>Pulling the live USPTO record — this can take up to a minute…');
+    var isGrade=CFG.mode==="grade";
+    $("run").disabled=true; setStatus('<span class="spin"></span>'+(isGrade?"Reading the record and counting citations — this can take up to a minute…":"Pulling the live USPTO record — this can take up to a minute…"));
     $("results").hidden=true;
-    fetch(FN,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({patents:list})})
+    fetch(isGrade?GRADE:FN,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({patents:list})})
       .then(function(r){return r.json().then(function(j){return {ok:r.ok,status:r.status,j:j};});})
       .then(function(res){
         var data=res.j;
         if(!data||!data.ok){ setStatus("Sorry — "+((data&&data.error)||("something went wrong (HTTP "+res.status+")."))); $("run").disabled=false; return; }
         setStatus("");
         (RENDER[CFG.mode]||renderAudit)(data);
-        showCapture(list, data.score);
+        if(!isGrade) showCapture(list, data.score);
         $("results").hidden=false;
         try{ location.replace("#p="+encodeURIComponent(list.join(","))); }catch(_e){}
         if($("share")) $("share").hidden=false;
@@ -157,6 +223,8 @@
       var ctaS=$("ctaStart"), ctaD=$("ctaDemo"); if(ctaS)ctaS.href=SIGNUP_URL; if(ctaD)ctaD.href=DEMO_URL;
       $("run").addEventListener("click",run);
       $("pn").addEventListener("keydown",function(e){ if((e.metaKey||e.ctrlKey)&&e.key==="Enter") run(); });
+      var entSel=$("entity");
+      if(entSel) entSel.addEventListener("change",function(){ if(_lastData) renderForecast(_lastData); });
       var sh=$("share");
       if(sh) sh.addEventListener("click",function(){
         var url=location.href.split("#")[0]+"#p="+encodeURIComponent(parseList($("pn").value).join(","));

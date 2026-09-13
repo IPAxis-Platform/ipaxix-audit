@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ipaxix.online/sitemap.xml
+Sitemap: https://audit.ipaxix.online/sitemap.xml

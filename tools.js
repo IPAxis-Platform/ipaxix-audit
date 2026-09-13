@@ -6,9 +6,12 @@
   var GRADE = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/patent-grade";
   var CONTACT = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/contact-message";
   var KEY = "sb_publishable_dQBbAXx5l_buD3m-HQieTA_UBQA125h";
-  // Point these where sign-up / booking should go:
-  var SIGNUP_URL = "https://patent-platform.vercel.app";
-  var DEMO_URL   = "mailto:hello@ipaxix.online?subject=IP%20Axix%20walkthrough";
+  // The platform is invite-only (set up personally after a walkthrough) — the free tools
+  // NEVER link into the app. Every "get set up" / "book" CTA routes to the scheduling link.
+  // ↓↓↓ SCHEDULING LINK — replace with your own Calendly / Cal.com link (e.g. https://calendly.com/your-name/20min).
+  var BOOK_URL   = "https://calendly.com/ipaxix/intro-call";
+  var SIGNUP_URL = BOOK_URL;
+  var DEMO_URL   = BOOK_URL;
   // USPTO maintenance-fee schedule (eff. 19 Jan 2025) — [large, small, micro].
   var FEE = { "3.5":{large:2150,small:860,micro:430}, "7.5":{large:4040,small:1616,micro:808}, "11.5":{large:8280,small:3312,micro:1656} };
 
@@ -303,7 +306,9 @@
     init:function(cfg){
       CFG=cfg||{};
       try{ mountConnect(); }catch(_e){}
-      var ctaS=$("ctaStart"), ctaD=$("ctaDemo"); if(ctaS)ctaS.href=SIGNUP_URL; if(ctaD)ctaD.href=DEMO_URL;
+      var ctaS=$("ctaStart"), ctaD=$("ctaDemo");
+      if(ctaS){ ctaS.href=SIGNUP_URL; ctaS.target="_blank"; ctaS.rel="noopener"; }
+      if(ctaD){ ctaD.href="javascript:void(0)"; ctaD.addEventListener("click",function(e){ e.preventDefault(); var f=document.getElementById("ipxFab"); if(f)f.click(); }); }
       $("run").addEventListener("click",run);
       $("pn").addEventListener("keydown",function(e){ if((e.metaKey||e.ctrlKey)&&e.key==="Enter") run(); });
       var entSel=$("entity");

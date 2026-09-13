@@ -3,79 +3,325 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Free Patent Portfolio Audit — IP Axix</title>
-<meta name="description" content="Paste your US patent numbers and get an instant deadline board and portfolio health score — free, no signup. From IP Axix.">
+<title>IP Axix</title>
+<meta name="description" content="The self-driving patent docket. IP Axix pulls your US & European patents from the patent offices, works out every deadline, and reminds you before anything lapses — no docketing department. Try it free, no signup.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="tools.css">
+<style>
+  :root{
+    --ink:#12212f; --ink-soft:#3a4a58; --paper:#f6f4ef; --card:#ffffff;
+    --line:#e2ddd2; --line-soft:#eee9df;
+    --navy:#14273F; --teal:#00796b; --teal-bright:#18B8A6; --blue:#1565c0;
+    --amber:#b4741a; --green:#2e6b3b;
+    --accent:var(--teal); --mut:#6d7a84;
+    --shadow:0 1px 2px rgba(18,33,47,.04),0 14px 40px -24px rgba(18,33,47,.34);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ink:#eef2f4; --ink-soft:#c2ccd2; --paper:#0f171d; --card:#161f27;
+      --line:#26333d; --line-soft:#1e2a33;
+      --teal:#4fc4b2; --blue:#7fb1ec; --amber:#e0a24d; --green:#7fc78d;
+      --mut:#8b99a3; --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px -24px rgba(0,0,0,.75);
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  ::selection{background:color-mix(in srgb,var(--teal-bright) 30%,transparent)}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+  .logo{display:inline-flex;line-height:0}
+  .logo svg{width:30px;height:30px;border-radius:8px;display:block}
+  .wordmark{font-family:"IBM Plex Mono",monospace;font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:14px;color:var(--ink)}
+
+  nav.top{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;padding:18px 0}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+  .nlinks{display:flex;gap:8px 20px;flex-wrap:wrap;margin-left:auto;align-items:center;font-size:13.5px}
+  .nlinks a{color:var(--ink-soft);text-decoration:none} .nlinks a:hover{color:var(--accent)}
+  .btn{display:inline-block;text-decoration:none;font-weight:600;border-radius:11px;padding:10px 18px;font-size:14px;white-space:nowrap;transition:filter .15s,border-color .15s,transform .15s}
+  .btn.primary{background:var(--accent);color:#fff} .btn.primary:hover{filter:brightness(1.07)}
+  .btn.ghost{border:1px solid var(--line);color:var(--ink)} .btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* hero */
+  header.hero{padding:52px 0 40px;text-align:center;position:relative}
+  .kicker{display:inline-flex;align-items:center;gap:8px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:600;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 32%,var(--line));
+    border-radius:100px;padding:6px 14px;background:color-mix(in srgb,var(--accent) 7%,transparent)}
+  h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(38px,7vw,72px);line-height:1.0;
+    letter-spacing:-.018em;margin:22px auto 0;text-wrap:balance;max-width:15ch}
+  h1 em{font-style:italic;color:var(--accent)}
+  .sub{font-size:19px;color:var(--ink-soft);max-width:56ch;margin:22px auto 0}
+  .herocta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  .herocta .btn{padding:15px 28px;font-size:16px;border-radius:12px}
+  .herocta .btn.primary:hover{transform:translateY(-1px)}
+  .trust{margin-top:22px;font-size:13px;color:var(--mut);display:flex;gap:8px 18px;justify-content:center;flex-wrap:wrap}
+  .trust span{display:inline-flex;align-items:center;gap:6px}
+  .trust b{color:var(--ink-soft);font-weight:600}
+  .tick{width:14px;height:14px;color:var(--accent);flex:0 0 auto}
+
+  section{padding:50px 0}
+  section + section{border-top:1px solid var(--line-soft)}
+  .center{text-align:center}
+  h2{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(24px,3.4vw,33px);line-height:1.1;
+    margin:0;letter-spacing:-.012em;text-wrap:balance}
+  .lede{color:var(--ink-soft);font-size:16px;margin:14px auto 0;max-width:60ch}
+  .mt{margin-top:28px}
+
+  /* free tools */
+  .tools .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(216px,1fr));gap:13px}
+  .toolcard{display:flex;flex-direction:column;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:15px;
+    padding:20px;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+  .toolcard:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .toolcard .k{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--accent)}
+  .toolcard b{display:block;font-family:"Fraunces",serif;font-size:18.5px;font-weight:600;margin:9px 0 6px;color:var(--ink);letter-spacing:-.005em}
+  .toolcard span{font-size:13px;color:var(--ink-soft);flex:1}
+  .toolcard .go{margin-top:13px;font-size:12.5px;font-weight:600;color:var(--accent)}
+
+  /* value props */
+  .vp{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+  .prop{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:22px 22px}
+  .prop h3{font-family:"Fraunces",serif;font-weight:600;font-size:18.5px;margin:0 0 7px;letter-spacing:-.005em}
+  .prop p{margin:0;font-size:14px;color:var(--ink-soft)}
+  .prop .ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);margin-bottom:14px}
+  .prop .ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+  /* how it works */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:640px){.steps{grid-template-columns:1fr}}
+  .step .n{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;
+    font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;color:#fff;background:var(--accent);margin-bottom:12px}
+  .step h3{font-family:"Fraunces",serif;font-weight:600;font-size:18px;margin:0 0 6px}
+  .step p{margin:0;font-size:14px;color:var(--ink-soft)}
+
+  /* who */
+  .who{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.who{grid-template-columns:1fr}}
+  .whobox{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:22px}
+  .whobox .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .whobox h3{font-family:"Fraunces",serif;font-weight:600;font-size:19px;margin:9px 0 8px}
+  .whobox p{margin:0;font-size:14px;color:var(--ink-soft)}
+
+  /* closing */
+  .close{background:var(--navy);color:#fff;border-radius:20px;padding:46px 34px;text-align:center;
+    background-image:radial-gradient(120% 140% at 50% -20%, rgba(24,184,166,.22), transparent 60%)}
+  .close h2{color:#fff;font-size:clamp(26px,4vw,38px)}
+  .close p{color:#cdd8e1;font-size:16px;max-width:50ch;margin:14px auto 0}
+  .close .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .close .btn.primary{background:var(--teal-bright);color:#08201c;padding:15px 30px;font-size:16px}
+  .close .btn.line{border:1px solid rgba(255,255,255,.4);color:#fff;padding:15px 26px;font-size:16px}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 60px;color:var(--mut);font-size:12.5px;line-height:1.7;margin-top:10px}
+  footer .frow{display:flex;gap:8px 22px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+  footer a{color:var(--ink-soft);text-decoration:none} footer a:hover{color:var(--accent)}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <nav class="topnav">
-    <a class="brand" href="https://ipaxix.online"><span class="logo"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IP Axix"><defs><linearGradient id="ipxT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#264C74"/><stop offset="1" stop-color="#14273F"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="url(#ipxT)"/><polyline points="18,41 32,29 46,41" fill="none" stroke="#EAF1F8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><polyline points="18,30 32,18 46,30" fill="none" stroke="#18B8A6" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span> IP Axix</a>
-    <div class="navlinks">
-      <a href="/" class="on">Portfolio Audit</a>
-      <a href="/in-force">Next deadline</a>
-      <a href="/expiry">Expiry</a>
-      <a href="/annuity">Maintenance fees</a>
-      <a href="/forecast">Cost forecast</a>
-      <a href="/grade">Strength grade</a>
+  <nav class="top">
+    <a class="brand" href="/">
+      <span class="logo"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IP Axix">
+        <defs><linearGradient id="ipxNav" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#264C74"/><stop offset="1" stop-color="#14273F"/></linearGradient></defs>
+        <rect width="64" height="64" rx="15" fill="url(#ipxNav)"/>
+        <polyline points="18,41 32,29 46,41" fill="none" stroke="#EAF1F8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="18,30 32,18 46,30" fill="none" stroke="#18B8A6" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg></span>
+      <span class="wordmark">IP Axix</span>
+    </a>
+    <div class="nlinks">
+      <a href="#tools">Free tools</a>
+      <a href="#how">How it works</a>
+      <a href="#who">Who it's for</a>
+      <a class="btn ghost" href="https://calendly.com/ipaxix/intro-call" target="_blank" rel="noopener">Book a demo</a>
+      <a class="btn primary" href="https://patent-platform.vercel.app">Start free</a>
     </div>
   </nav>
-  <header class="mast">
-    <h1>Your patent portfolio, <em>checked in seconds.</em></h1>
-    <p class="lede">Paste your US patent or application numbers. We pull the live record and show every upcoming deadline and a portfolio health score — free, no signup, nothing saved.</p>
+
+  <header class="hero">
+    <span class="kicker">The self-driving patent docket</span>
+    <h1>Your patents, <em>never a missed deadline.</em></h1>
+    <p class="sub">IP Axix is the first patent manager that sets itself up from nothing but your patent numbers — pulling your US and European cases live from the patent offices, calculating every deadline, and reminding you before anything can lapse. No docketing department required.</p>
+    <div class="herocta">
+      <a class="btn primary" href="https://audit.ipaxix.online">Audit my portfolio free →</a>
+      <a class="btn ghost" href="https://patent-platform.vercel.app">Start free</a>
+    </div>
+    <div class="trust">
+      <span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> No signup to try</span>
+      <span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Live from <b>USPTO</b> &amp; <b>EPO</b></span>
+      <span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Set up in minutes</span>
+    </div>
   </header>
 
-  <section class="panel inputcard">
-    <label class="field" for="pn">Patent / application numbers</label>
-    <textarea id="pn" spellcheck="false" placeholder="e.g.  US 10,000,000&#10;9,625,667&#10;16/803,114"></textarea>
-    <div class="row">
-      <button class="go" id="run">Run my free audit</button>
-      <button class="ghost" id="share" hidden>Copy shareable link</button>
-      <span class="hint"><b>Up to 20 numbers.</b> US &amp; European — grant, application or publication numbers (e.g. EP4254027).</span>
+  <!-- FREE TOOLS -->
+  <section class="tools center" id="tools">
+    <h2>See it work on your own patents — free</h2>
+    <p class="lede">Four instant checks, no account needed. Paste a patent number, get an answer from the live record in seconds.</p>
+    <div class="grid mt" style="text-align:left">
+      <a class="toolcard" href="https://audit.ipaxix.online/">
+        <span class="k">Portfolio audit</span><b>Full portfolio audit</b>
+        <span>Every upcoming deadline plus a portfolio health score.</span>
+        <div class="go">Run a free audit →</div>
+      </a>
+      <a class="toolcard" href="https://audit.ipaxix.online/in-force">
+        <span class="k">Deadline</span><b>When is my next deadline?</b>
+        <span>The soonest deadline on any US or European patent, plus status and expiry.</span>
+        <div class="go">Find my next deadline →</div>
+      </a>
+      <a class="toolcard" href="https://audit.ipaxix.online/expiry">
+        <span class="k">Term</span><b>Patent expiry calculator</b>
+        <span>Estimated expiry date and how much term is left.</span>
+        <div class="go">Calculate expiry →</div>
+      </a>
+      <a class="toolcard" href="https://audit.ipaxix.online/annuity">
+        <span class="k">Fees</span><b>Maintenance-fee estimator</b>
+        <span>The 3.5-, 7.5- and 11.5-year fee schedule and amounts.</span>
+        <div class="go">Estimate fees →</div>
+      </a>
     </div>
   </section>
 
-  <div id="status" hidden></div>
-
-  <main id="results" hidden>
-    <section class="panel scorecard">
-      <div class="gauge">
-        <svg width="104" height="104" viewBox="0 0 104 104">
-          <circle cx="52" cy="52" r="44" fill="none" stroke="var(--line)" stroke-width="10"></circle>
-          <circle id="ring" cx="52" cy="52" r="44" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"></circle>
-        </svg>
-        <div class="val"><b id="scoreNum">—</b><span>Health</span></div>
+  <!-- VALUE -->
+  <section id="what">
+    <div class="center"><h2>One place for the whole life of a patent</h2>
+    <p class="lede">From the first formalities notice to the last renewal — the dates, documents and signals that decide whether a right survives, and whether it's worth keeping.</p></div>
+    <div class="vp mt">
+      <div class="prop">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div>
+        <h3>Docketing on autopilot</h3>
+        <p>Office actions, restriction requirements, issue fees, maintenance fees and EP renewals — calculated from the official record against the real rules, so nothing rides on someone remembering.</p>
       </div>
-      <div class="scoretext"><h2 id="scoreHead">Portfolio health</h2><p id="scoreSub"></p></div>
-    </section>
-    <div class="tiles" id="tiles"></div>
-    <div class="plist" id="plist"></div>
-    <div class="capture" id="capture" hidden></div>
-    <section class="cta">
-      <h2>Never chase these dates by hand again.</h2>
-      <p>This snapshot is a one-time look. In the full tool your whole portfolio — US and European — stays synced, every deadline is monitored, and you get reminders before anything is at risk.</p>
-      <div class="btns"><a class="primary" id="ctaStart" href="#">Start monitoring free</a><a class="secondary" id="ctaDemo" href="#">Book a 20-min walkthrough</a></div>
-    </section>
-    <div class="more">
-      <h3>More free tools</h3>
-      <div class="grid">
-        <a href="/in-force"><b>When is my next deadline?</b><span>The soonest deadline on any US or European patent.</span></a>
-        <a href="/expiry"><b>Patent expiry calculator</b><span>When a patent's term runs out.</span></a>
-        <a href="/annuity"><b>Maintenance-fee estimator</b><span>What the USPTO fees will cost.</span></a>
+      <div class="prop">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
+        <h3>Portfolio intelligence</h3>
+        <p>See the whole portfolio at a glance, spot which competitors cite your patents, and hand your board a clean view of what you own and the protection it buys.</p>
+      </div>
+      <div class="prop">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+        <h3>Never lose a right</h3>
+        <p>Every date is watched and you're reminded well before it falls due — because one missed renewal can abandon a granted patent worth far more than the reminder that would have saved it.</p>
       </div>
     </div>
-  </main>
+  </section>
+
+  <!-- HOW -->
+  <section id="how">
+    <div class="center"><h2>Live in minutes, not a migration</h2>
+    <p class="lede">No data-entry project, no training. Point it at your patents and it does the rest.</p></div>
+    <div class="steps mt">
+      <div class="step"><div class="n">1</div><h3>Add your patents</h3><p>Paste your patent or application numbers — US and European. That's the whole setup.</p></div>
+      <div class="step"><div class="n">2</div><h3>See your live board</h3><p>Every deadline, document and status appears at once, pulled fresh from the patent offices.</p></div>
+      <div class="step"><div class="n">3</div><h3>Stay ahead</h3><p>It keeps watching and reminds you before each date — renewals, responses and fees.</p></div>
+    </div>
+  </section>
+
+  <!-- WHO -->
+  <section id="who">
+    <div class="center"><h2>Built for the people who own the deadlines</h2></div>
+    <div class="who mt">
+      <div class="whobox"><span class="tag">In-house IP teams</span><h3>Your own cockpit</h3>
+        <p>A one-to-five person team running a global portfolio on spreadsheets and outside-counsel email gets a single source of truth — every US and EP case, every date, one screen.</p></div>
+      <div class="whobox"><span class="tag">Firms &amp; patent agents</span><h3>A portal for every client</h3>
+        <p>Run many clients' portfolios behind separate logins and give each a branded view of their deadlines and status — docketing depth without the docketing overhead.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="close">
+      <h2>Start with your own portfolio.</h2>
+      <p>Run a free audit on your patents right now — no signup — or start a free account and let IP Axix watch every deadline for you.</p>
+      <div class="btns">
+        <a class="btn primary" href="https://audit.ipaxix.online">Audit my portfolio free</a>
+        <a class="btn line" href="https://patent-platform.vercel.app">Start free</a>
+      </div>
+    </div>
+  </section>
 
   <footer>
-    <p><strong>How to read this:</strong> deadlines are calculated from the public patent-office record and standard prosecution rules. Dates marked <span class="mono">est</span> are approximate. This is a convenience snapshot, not legal advice — always verify against the official record and confirm any critical date with your patent attorney.</p>
-    <p><strong>Privacy:</strong> the numbers you check aren't linked to you and are never sold; we briefly cache public-record results to speed up repeat lookups. If you ask us to watch a patent, we store your email only to send those deadline reminders — one-click unsubscribe, anytime.</p>
-    <p class="mono">IP Axix · Free Instant Audit · free tools</p>
+    <div class="frow">
+      <span class="logo"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IP Axix" style="width:22px;height:22px">
+        <defs><linearGradient id="ipxFoot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#264C74"/><stop offset="1" stop-color="#14273F"/></linearGradient></defs>
+        <rect width="64" height="64" rx="15" fill="url(#ipxFoot)"/>
+        <polyline points="18,41 32,29 46,41" fill="none" stroke="#EAF1F8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="18,30 32,18 46,30" fill="none" stroke="#18B8A6" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg></span>
+      <a href="https://audit.ipaxix.online/">Free audit</a>
+      <a href="https://audit.ipaxix.online/in-force">Next deadline</a>
+      <a href="https://audit.ipaxix.online/expiry">Expiry calculator</a>
+      <a href="https://audit.ipaxix.online/annuity">Maintenance fees</a>
+      <a href="mailto:hello@ipaxix.online">Contact</a>
+    </div>
+    <p>IP Axix helps you manage patent deadlines and portfolio data. It is a convenience tool, not legal advice — always verify against the official patent-office record and confirm any critical date or action with your patent attorney.</p>
+    <p class="mono">© 2026 IP Axix · ipaxix.online</p>
   </footer>
 </div>
-<script src="tools.js"></script>
-<script>IPAX.init({ mode:"audit", tool:"audit", examples:"10000000\n9625667\nEP4254027" });</script>
+<script>
+(function(){
+  var CONTACT="https://ooanilhblskuaasxyimw.supabase.co/functions/v1/contact-message";
+  var KEY="sb_publishable_dQBbAXx5l_buD3m-HQieTA_UBQA125h";
+  var BOOK="https://calendly.com/ipaxix/intro-call";  /* ← replace with your Calendly / Cal.com link */
+  function $(id){return document.getElementById(id);}
+  var w=document.createElement("div"); w.id="ipx-connect";
+  w.innerHTML=
+    '<style>'+
+    '#ipx-connect{position:fixed;right:20px;bottom:20px;z-index:99999;font-family:inherit}'+
+    '#ipx-connect *{box-sizing:border-box}'+
+    '.ipxfab{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;color:#fff;background:linear-gradient(135deg,#264C74,#14273F);font-size:14px;font-weight:700;padding:12px 18px;border-radius:26px;box-shadow:0 10px 30px rgba(20,39,63,.32);transition:transform .15s ease,box-shadow .15s ease}'+
+    '.ipxfab:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(20,39,63,.4)}'+
+    '.ipxfab .dot{width:8px;height:8px;border-radius:50%;background:#18B8A6;animation:ipxpulse 2s infinite}'+
+    '@keyframes ipxpulse{0%{box-shadow:0 0 0 0 rgba(24,184,166,.5)}70%{box-shadow:0 0 0 8px rgba(24,184,166,0)}100%{box-shadow:0 0 0 0 rgba(24,184,166,0)}}'+
+    '.ipxpanel{position:absolute;right:0;bottom:60px;width:340px;max-width:88vw;background:#fff;color:#14273F;border:1px solid #e2e7ee;border-radius:16px;box-shadow:0 24px 60px rgba(20,39,63,.28);overflow:hidden;animation:ipxin .18s ease}'+
+    '@keyframes ipxin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}'+
+    '.ipxtop{background:linear-gradient(135deg,#264C74,#14273F);color:#fff;padding:16px 18px;position:relative}'+
+    '.ipxtop b{font-size:15px;font-weight:800;display:block}.ipxtop p{margin:6px 0 0;font-size:12.5px;line-height:1.5;color:#c7d4e6}'+
+    '.ipxx{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.15);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:16px;line-height:1}'+
+    '.ipxbody{padding:14px 16px}'+
+    '.ipxbook{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none;background:#18B8A6;color:#08312c;font-weight:800;font-size:13.5px;padding:11px;border-radius:10px;margin-bottom:8px}'+
+    '.ipxor{display:flex;align-items:center;gap:8px;color:#8a97a8;font-size:11px;margin:10px 2px}.ipxor:before,.ipxor:after{content:"";height:1px;background:#e2e7ee;flex:1}'+
+    '#ipx-connect input,#ipx-connect textarea{width:100%;border:1px solid #d7dee8;border-radius:9px;padding:9px 11px;font:inherit;font-size:13px;margin-bottom:7px;background:#fafbfd;color:#14273F}'+
+    '#ipx-connect input:focus,#ipx-connect textarea:focus{outline:none;border-color:#264C74;background:#fff}'+
+    '.ipxsend{width:100%;border:none;cursor:pointer;background:#14273F;color:#fff;font-weight:800;font-size:13.5px;padding:11px;border-radius:10px}.ipxsend:disabled{opacity:.6;cursor:default}'+
+    '.ipxnote{font-size:10.5px;color:#8a97a8;line-height:1.5;margin-top:8px}.ipxstatus{font-size:12px;margin-top:8px}'+
+    '.ipxok{padding:18px 4px;text-align:center}.ipxok .big{font-size:15px;font-weight:800;color:#0e7c68}.ipxok p{font-size:12.5px;color:#5a6b80;margin:6px 0 0;line-height:1.5}'+
+    '</style>'+
+    '<button class="ipxfab" id="ipxFab"><span class="dot"></span>Let’s talk</button>'+
+    '<div class="ipxpanel" id="ipxPanel" hidden>'+
+      '<div class="ipxtop"><button class="ipxx" id="ipxX" aria-label="Close">×</button><b>Talk to a docket specialist</b><p>See your whole US &amp; European portfolio monitored in minutes. Book a quick walkthrough — or leave a message and we’ll reply within one business day.</p></div>'+
+      '<div class="ipxbody" id="ipxBody">'+
+        '<a class="ipxbook" id="ipxBook" href="'+BOOK+'" target="_blank" rel="noopener">📅 Book a 20-min walkthrough</a>'+
+        '<div class="ipxor"><span>or send a message</span></div>'+
+        '<form id="ipxForm">'+
+          '<input id="ipxName" placeholder="Your name" autocomplete="name">'+
+          '<input id="ipxEmail" type="email" placeholder="Work email" autocomplete="email">'+
+          '<input id="ipxCo" placeholder="Company (optional)" autocomplete="organization">'+
+          '<textarea id="ipxMsg" placeholder="What would you like help with?" rows="3"></textarea>'+
+          '<button class="ipxsend" id="ipxSend" type="submit">Send message</button>'+
+          '<div class="ipxstatus" id="ipxStatus"></div>'+
+          '<div class="ipxnote">We’ll only use your details to reply. No spam, ever.</div>'+
+        '</form>'+
+      '</div>'+
+    '</div>';
+  document.body.appendChild(w);
+  var panel=$("ipxPanel");
+  $("ipxFab").addEventListener("click",function(){ if(panel.hidden){ panel.hidden=false; setTimeout(function(){var n=$("ipxName"); if(n)n.focus();},50);} else panel.hidden=true; });
+  $("ipxX").addEventListener("click",function(){ panel.hidden=true; });
+  $("ipxForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    var email=($("ipxEmail").value||"").trim(), msg=($("ipxMsg").value||"").trim(), st=$("ipxStatus");
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ st.style.color="#B00020"; st.textContent="Please enter a valid email address."; return; }
+    if(msg.length<2){ st.style.color="#B00020"; st.textContent="Please add a short message."; return; }
+    var btn=$("ipxSend"); btn.disabled=true; st.style.color="#5a6b80"; st.textContent="Sending…";
+    fetch(CONTACT,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({name:($("ipxName").value||"").trim(),email:email,company:($("ipxCo").value||"").trim(),message:msg,source:"website"})})
+      .then(function(r){return r.json();}).then(function(j){
+        if(j&&j.ok){ $("ipxBody").innerHTML='<div class="ipxok"><div class="big">✓ Message sent</div><p>Thanks — we’ve got your note and will reply within one business day.</p></div>'; }
+        else { btn.disabled=false; st.style.color="#B00020"; st.textContent=(j&&j.error)||"Could not send — please try again."; }
+      }).catch(function(){ btn.disabled=false; st.style.color="#B00020"; st.textContent="Could not send — please try again."; });
+  });
+})();
+</script>
 </body>
 </html>

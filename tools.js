@@ -113,7 +113,7 @@
     c.innerHTML='<h2>Want these watched for you — free?</h2>'+
       '<p>This is a one-time snapshot. Add your email and we’ll keep an eye on these patents and tell you before each deadline. No charge.</p>'+
       '<div class="crow"><input type="email" id="capEmail" placeholder="you@company.com" autocomplete="email"><button class="go" id="capBtn">Email me &amp; monitor these</button></div>'+
-      '<div class="mini" id="capMsg">We’ll only use it to send you deadline alerts for these patents. No spam.</div>';
+      '<div class="mini" id="capMsg">We store your email only to send deadline reminders for these patents — never sold or shared, and you can unsubscribe in one click from any email. By continuing you agree to this.</div>';
     c.hidden=false;
     $("capBtn").addEventListener("click",function(){
       var em=($("capEmail").value||"").trim();

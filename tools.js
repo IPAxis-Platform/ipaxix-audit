@@ -4,6 +4,7 @@
   var CAP = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/capture-lead";
   var EMAIL = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/email-deadlines";
   var GRADE = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/patent-grade";
+  var CONTACT = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/contact-message";
   var KEY = "sb_publishable_dQBbAXx5l_buD3m-HQieTA_UBQA125h";
   // Point these where sign-up / booking should go:
   var SIGNUP_URL = "https://patent-platform.vercel.app";
@@ -226,10 +227,82 @@
       .then(function(){ $("run").disabled=false; });
   }
 
+  // Floating "Let's talk" widget — a confident, high-intent way to connect: leads with a
+  // walkthrough booking, with a quick message form as the low-friction fallback.
+  function mountConnect(){
+    if(document.getElementById("ipx-connect")) return;
+    var w=document.createElement("div"); w.id="ipx-connect";
+    w.innerHTML=
+      '<style>'+
+      '#ipx-connect{position:fixed;right:20px;bottom:20px;z-index:99999;font-family:"IBM Plex Sans",system-ui,Segoe UI,Helvetica,Arial,sans-serif}'+
+      '#ipx-connect *{box-sizing:border-box}'+
+      '.ipxfab{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;color:#fff;background:linear-gradient(135deg,#264C74,#14273F);font-size:14px;font-weight:700;padding:12px 18px;border-radius:26px;box-shadow:0 10px 30px rgba(20,39,63,.32);transition:transform .15s ease,box-shadow .15s ease}'+
+      '.ipxfab:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(20,39,63,.4)}'+
+      '.ipxfab .dot{width:8px;height:8px;border-radius:50%;background:#18B8A6;box-shadow:0 0 0 0 rgba(24,184,166,.6);animation:ipxpulse 2s infinite}'+
+      '@keyframes ipxpulse{0%{box-shadow:0 0 0 0 rgba(24,184,166,.5)}70%{box-shadow:0 0 0 8px rgba(24,184,166,0)}100%{box-shadow:0 0 0 0 rgba(24,184,166,0)}}'+
+      '.ipxpanel{position:absolute;right:0;bottom:60px;width:340px;max-width:88vw;background:#fff;color:#14273F;border:1px solid #e2e7ee;border-radius:16px;box-shadow:0 24px 60px rgba(20,39,63,.28);overflow:hidden;animation:ipxin .18s ease}'+
+      '@keyframes ipxin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}'+
+      '.ipxtop{background:linear-gradient(135deg,#264C74,#14273F);color:#fff;padding:16px 18px}'+
+      '.ipxtop b{font-size:15px;font-weight:800;display:block}'+
+      '.ipxtop p{margin:6px 0 0;font-size:12.5px;line-height:1.5;color:#c7d4e6}'+
+      '.ipxx{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.15);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:16px;line-height:1}'+
+      '.ipxbody{padding:14px 16px}'+
+      '.ipxbook{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none;background:#18B8A6;color:#08312c;font-weight:800;font-size:13.5px;padding:11px;border-radius:10px;margin-bottom:8px}'+
+      '.ipxbook:hover{filter:brightness(1.05)}'+
+      '.ipxor{display:flex;align-items:center;gap:8px;color:#8a97a8;font-size:11px;margin:10px 2px}'+
+      '.ipxor:before,.ipxor:after{content:"";height:1px;background:#e2e7ee;flex:1}'+
+      '#ipx-connect input,#ipx-connect textarea{width:100%;border:1px solid #d7dee8;border-radius:9px;padding:9px 11px;font:inherit;font-size:13px;margin-bottom:7px;background:#fafbfd;color:#14273F}'+
+      '#ipx-connect input:focus,#ipx-connect textarea:focus{outline:none;border-color:#264C74;background:#fff}'+
+      '.ipxsend{width:100%;border:none;cursor:pointer;background:#14273F;color:#fff;font-weight:800;font-size:13.5px;padding:11px;border-radius:10px}'+
+      '.ipxsend:disabled{opacity:.6;cursor:default}'+
+      '.ipxnote{font-size:10.5px;color:#8a97a8;line-height:1.5;margin-top:8px}'+
+      '.ipxstatus{font-size:12px;margin-top:8px}'+
+      '.ipxok{padding:18px 4px;text-align:center}.ipxok .big{font-size:15px;font-weight:800;color:#0e7c68}.ipxok p{font-size:12.5px;color:#5a6b80;margin:6px 0 0;line-height:1.5}'+
+      '</style>'+
+      '<button class="ipxfab" id="ipxFab"><span class="dot"></span>Let’s talk</button>'+
+      '<div class="ipxpanel" id="ipxPanel" hidden>'+
+        '<div class="ipxtop"><button class="ipxx" id="ipxX" aria-label="Close">×</button><b>Talk to a docket specialist</b><p>See your whole US &amp; European portfolio monitored in minutes. Book a quick walkthrough — or leave a message and we’ll reply within one business day.</p></div>'+
+        '<div class="ipxbody" id="ipxBody">'+
+          '<a class="ipxbook" id="ipxBook" href="#" target="_blank" rel="noopener">📅 Book a 20-min walkthrough</a>'+
+          '<div class="ipxor"><span>or send a message</span></div>'+
+          '<form id="ipxForm">'+
+            '<input id="ipxName" placeholder="Your name" autocomplete="name">'+
+            '<input id="ipxEmail" type="email" placeholder="Work email" autocomplete="email">'+
+            '<input id="ipxCo" placeholder="Company (optional)" autocomplete="organization">'+
+            '<textarea id="ipxMsg" placeholder="What would you like help with? (e.g. “We have ~40 patents across US &amp; EP…”)" rows="3"></textarea>'+
+            '<button class="ipxsend" id="ipxSend" type="submit">Send message</button>'+
+            '<div class="ipxstatus" id="ipxStatus"></div>'+
+            '<div class="ipxnote">We’ll only use your details to reply. No spam, ever.</div>'+
+          '</form>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(w);
+    var fab=$("ipxFab"),panel=$("ipxPanel"),bookEl=$("ipxBook");
+    if(bookEl) bookEl.href = (window.IPAX&&window.IPAX.demo)||DEMO_URL;
+    function open(){ panel.hidden=false; setTimeout(function(){ var n=$("ipxName"); if(n)n.focus(); },50); }
+    function close(){ panel.hidden=true; }
+    fab.addEventListener("click",function(){ panel.hidden?open():close(); });
+    $("ipxX").addEventListener("click",close);
+    $("ipxForm").addEventListener("submit",function(e){
+      e.preventDefault();
+      var email=($("ipxEmail").value||"").trim(), msg=($("ipxMsg").value||"").trim();
+      var st=$("ipxStatus");
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ st.style.color="#B00020"; st.textContent="Please enter a valid email address."; return; }
+      if(msg.length<2){ st.style.color="#B00020"; st.textContent="Please add a short message."; return; }
+      var btn=$("ipxSend"); btn.disabled=true; st.style.color="#5a6b80"; st.textContent="Sending…";
+      fetch(CONTACT,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({name:($("ipxName").value||"").trim(),email:email,company:($("ipxCo").value||"").trim(),message:msg,source:"tool:"+((CFG&&(CFG.tool||CFG.mode))||"free")})})
+        .then(function(r){return r.json();}).then(function(j){
+          if(j&&j.ok){ $("ipxBody").innerHTML='<div class="ipxok"><div class="big">✓ Message sent</div><p>Thanks — we’ve got your note and will reply within one business day.</p></div>'; }
+          else { btn.disabled=false; st.style.color="#B00020"; st.textContent=(j&&j.error)||"Could not send — please try again."; }
+        }).catch(function(){ btn.disabled=false; st.style.color="#B00020"; st.textContent="Could not send — please try again."; });
+    });
+  }
+
   window.IPAX={
     signup:SIGNUP_URL, demo:DEMO_URL,
     init:function(cfg){
       CFG=cfg||{};
+      try{ mountConnect(); }catch(_e){}
       var ctaS=$("ctaStart"), ctaD=$("ctaDemo"); if(ctaS)ctaS.href=SIGNUP_URL; if(ctaD)ctaD.href=DEMO_URL;
       $("run").addEventListener("click",run);
       $("pn").addEventListener("keydown",function(e){ if((e.metaKey||e.ctrlKey)&&e.key==="Enter") run(); });

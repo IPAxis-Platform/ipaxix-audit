@@ -2,6 +2,7 @@
 (function(){
   var FN  = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/free-audit";
   var CAP = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/capture-lead";
+  var EMAIL = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/email-deadlines";
   var KEY = "sb_publishable_dQBbAXx5l_buD3m-HQieTA_UBQA125h";
   // Point these where sign-up / booking should go:
   var SIGNUP_URL = "https://patent-platform.vercel.app";
@@ -110,20 +111,20 @@
 
   function showCapture(list,score){
     var c=$("capture"); if(!c) return;
-    c.innerHTML='<h2>Want these watched for you — free?</h2>'+
-      '<p>This is a one-time snapshot. Add your email and we’ll keep an eye on these patents and tell you before each deadline. No charge.</p>'+
-      '<div class="crow"><input type="email" id="capEmail" placeholder="you@company.com" autocomplete="email"><button class="go" id="capBtn">Email me &amp; monitor these</button></div>'+
-      '<div class="mini" id="capMsg">We store your email only to send deadline reminders for these patents — never sold or shared, and you can unsubscribe in one click from any email. By continuing you agree to this.</div>';
+    c.innerHTML='<h2>Email me my deadlines — free</h2>'+
+      '<p>We’ll email you this deadline list plus a calendar file you can add to Google, Outlook or Apple Calendar in one tap — and keep watching so you’re reminded before each date.</p>'+
+      '<div class="crow"><input type="email" id="capEmail" placeholder="you@company.com" autocomplete="email"><button class="go" id="capBtn">Email me my deadlines</button></div>'+
+      '<div class="mini" id="capMsg">We store your email only to send these deadline reminders — never sold or shared, and you can unsubscribe in one click from any email. By continuing you agree to this.</div>';
     c.hidden=false;
     $("capBtn").addEventListener("click",function(){
       var em=($("capEmail").value||"").trim();
       if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ $("capMsg").textContent="Please enter a valid email address."; return; }
-      $("capBtn").disabled=true; $("capMsg").textContent="Saving…";
-      fetch(CAP,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({email:em,patents:list,tool:CFG.tool||CFG.mode,score:score})})
+      $("capBtn").disabled=true; $("capMsg").textContent="Sending your deadlines…";
+      fetch(EMAIL,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({email:em,patents:list,tool:CFG.tool||CFG.mode})})
         .then(function(r){return r.json();}).then(function(j){
-          if(j&&j.ok){ $("capMsg").parentNode.innerHTML='<div class="done">✓ Done — we’ll watch these and email you before each deadline.</div>'; }
-          else { $("capBtn").disabled=false; $("capMsg").textContent=(j&&j.error)||"Could not save — please try again."; }
-        }).catch(function(){ $("capBtn").disabled=false; $("capMsg").textContent="Could not save — please try again."; });
+          if(j&&j.ok){ $("capMsg").parentNode.innerHTML='<div class="done">✓ Sent — check your inbox for your deadlines and calendar file (peek in spam if it’s not there in a minute). We’ll remind you before each date.</div>'; }
+          else { $("capBtn").disabled=false; $("capMsg").textContent=(j&&j.error)||"Could not send — please try again."; }
+        }).catch(function(){ $("capBtn").disabled=false; $("capMsg").textContent="Could not send — please try again."; });
     });
   }
 

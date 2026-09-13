@@ -109,45 +109,55 @@
   // ---- renewal / maintenance-cost forecast (portfolio roll-up) ----
   var _lastData=null, _entity="large";
   var ENT_LABEL={large:"Large entity",small:"Small entity",micro:"Micro entity"};
+  var EPO_FEE={3:725,4:885,5:1050,6:1215,7:1375,8:1540,9:1700};
+  function epoFee(y){ return y>=10?1865:(EPO_FEE[y]||0); }
+  function moneyE(n){ return "€"+Number(n||0).toLocaleString("en-US"); }
+  function eomStr(iso){ var d=new Date(String(iso).slice(0,10)+"T00:00:00Z"); if(isNaN(d.getTime()))return iso; return new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)).toISOString().slice(0,10); }
+  function feeYears(items,fmt){ var by={}; items.forEach(function(x){ var y=x.due.slice(0,4); if(!by[y])by[y]={sum:0,rows:[]}; by[y].sum+=x.fee||0; by[y].rows.push(x); }); var ys=Object.keys(by).sort();
+    return ys.map(function(y){ var rows=by[y].rows.map(function(x){
+        return '<div class="dl d-upcoming"><span class="stripe s-upcoming"></span><div class="dmain"><div class="dtype">'+esc(x.stage)+' <span style="color:var(--mut)">· '+esc(x.pid)+'</span></div><div class="dnote">'+esc(x.title)+'</div></div><div class="ddate">'+fmtDate(x.due)+'<small>'+fmt(x.fee)+'</small></div></div>'; }).join("");
+      return '<div class="pat"><div class="top"><span class="pid">'+y+'</span><span class="pt">'+by[y].rows.length+' fee'+(by[y].rows.length===1?'':'s')+' due</span><span class="badge b-granted">'+fmt(by[y].sum)+'</span></div>'+rows+'</div>'; }).join("");
+  }
   function renderForecast(data){
     _lastData=data;
     var selEl=$("entity"); if(selEl&&selEl.value) _entity=selEl.value;
-    var today=new Date().toISOString().slice(0,10);
-    var items=[], epRows=[], noSchedule=0;
+    var today=new Date().toISOString().slice(0,10), horizon=addYears(today,5);
+    var usItems=[], epItems=[], epGranted=0, noSchedule=0;
     (data.patents||[]).forEach(function(p){
+      var jur=String(p.jurisdiction||"").toUpperCase();
       var granted=/granted/i.test(p.statusLabel||"");
-      if(granted && p.jurisdiction==="US" && p.grantDate){
-        [["3.5","4th (3.5-yr)"],["7.5","8th (7.5-yr)"],["11.5","12th (11.5-yr)"]].forEach(function(st){
-          var due=addYears(p.grantDate, parseFloat(st[0])); if(due>=today){ var f=FEE[st[0]]; items.push({due:due,pid:p.display||p.id,title:p.title||"",stage:st[1],fee:f?f[_entity]:0}); }
-        });
-      } else if(granted && p.jurisdiction==="EP"){
-        var nd=(p.deadlines||[]).filter(function(d){return /renewal/i.test(d.type);})[0];
-        epRows.push({pid:p.display||p.id, next:nd?nd.due:null});
-      } else { noSchedule++; }
+      if(/abandon|lapsed|not in force|no record|not covered|expired/i.test(p.statusLabel||"")){ noSchedule++; return; }
+      if(jur==="US"){
+        if(granted && p.grantDate){ [["3.5","3.5-yr"],["7.5","7.5-yr"],["11.5","11.5-yr"]].forEach(function(st){ var due=addYears(p.grantDate,parseFloat(st[0])); if(due>=today){ var f=FEE[st[0]]; usItems.push({due:due,pid:p.display||p.id,title:p.title||"",stage:st[1],fee:f?f[_entity]:0}); } }); }
+        else noSchedule++;
+      } else if(jur==="EP"){
+        if(granted) epGranted++;
+        else { var fil=p.filingDate; if(fil){ for(var y=3;y<=20;y++){ var due=eomStr(addYears(fil,y)); if(due>=today && due<=horizon){ epItems.push({due:due,pid:p.display||p.id,title:p.title||"",stage:"Year "+y,fee:epoFee(y)}); } } } else noSchedule++; }
+      } else noSchedule++;
     });
-    items.sort(function(a,b){return String(a.due).localeCompare(String(b.due));});
-    var total=items.reduce(function(t,x){return t+(x.fee||0);},0);
-    var byYear={}; items.forEach(function(x){ var y=x.due.slice(0,4); if(!byYear[y]) byYear[y]={sum:0,rows:[]}; byYear[y].sum+=x.fee||0; byYear[y].rows.push(x); });
-    var years=Object.keys(byYear).sort();
+    usItems.sort(function(a,b){return String(a.due).localeCompare(String(b.due));});
+    epItems.sort(function(a,b){return String(a.due).localeCompare(String(b.due));});
+    var usTotal=usItems.reduce(function(t,x){return t+(x.fee||0);},0);
+    var epTotal=epItems.reduce(function(t,x){return t+(x.fee||0);},0);
     var out='';
-    out+='<div class="scorecard panel" style="align-items:center">'+
-      '<div class="scoretext"><h2 style="margin:0">Estimated US maintenance-fee spend</h2>'+
-      '<p style="margin:4px 0 0">Over the next ~12 years, keeping these granted US patents alive will cost about <b style="color:var(--ink,#14273F)">'+money(total)+'</b> in official USPTO fees ('+ENT_LABEL[_entity]+', excludes attorney charges &amp; late surcharges).</p></div>'+
-      '<div class="val" style="text-align:right"><b style="font-size:26px">'+money(total)+'</b><span>'+items.length+' fee'+(items.length===1?'':'s')+'</span></div></div>';
-    if(years.length){
-      out+='<div class="plist">'+years.map(function(y){
-        var rows=byYear[y].rows.map(function(x){
-          return '<div class="dl d-upcoming"><span class="stripe s-upcoming"></span><div class="dmain"><div class="dtype">'+esc(x.stage)+' maintenance fee <span style="color:var(--mut)">· '+esc(x.pid)+'</span></div><div class="dnote">'+esc(x.title)+'</div></div><div class="ddate">'+fmtDate(x.due)+'<small>'+money(x.fee)+'</small></div></div>';
-        }).join("");
-        return '<div class="pat"><div class="top"><span class="pid">'+y+'</span><span class="pt">'+byYear[y].rows.length+' fee'+(byYear[y].rows.length===1?'':'s')+' due</span><span class="badge b-granted">'+money(byYear[y].sum)+'</span></div>'+rows+'</div>';
-      }).join("")+'</div>';
-    } else {
-      out+='<div class="plist"><div class="pat"><div class="fact"><span class="flab">No upcoming US maintenance fees for the granted patents you entered (all future stages may already be past, or none are granted US patents).</span></div></div></div>';
-    }
+    // US section
+    out+='<div class="scorecard panel" style="align-items:center"><div class="scoretext"><h2 style="margin:0">🇺🇸 US — USPTO maintenance fees</h2>'+
+      '<p style="margin:4px 0 0">Over the next ~12 years, keeping these granted US patents alive costs about <b style="color:var(--ink,#14273F)">'+money(usTotal)+'</b> in official USPTO fees ('+ENT_LABEL[_entity]+').</p></div>'+
+      '<div class="val" style="text-align:right"><b style="font-size:24px">'+money(usTotal)+'</b><span>'+usItems.length+' fee'+(usItems.length===1?'':'s')+'</span></div></div>';
+    out+= usItems.length ? ('<div class="plist">'+feeYears(usItems,money)+'</div>')
+      : '<div class="plist"><div class="pat"><div class="fact"><span class="flab">No upcoming US maintenance fees among the numbers you entered.</span></div></div></div>';
+    // EP section
+    out+='<div class="scorecard panel" style="align-items:center;margin-top:14px"><div class="scoretext"><h2 style="margin:0">🇪🇺 Europe — EPO renewal fees</h2>'+
+      '<p style="margin:4px 0 0">EPO renewal fees for European applications still <b>pending</b> at the EPO, over the next 5 years: about <b style="color:var(--ink,#14273F)">'+moneyE(epTotal)+'</b>.</p></div>'+
+      '<div class="val" style="text-align:right"><b style="font-size:24px">'+moneyE(epTotal)+'</b><span>'+epItems.length+' renewal'+(epItems.length===1?'':'s')+'</span></div></div>';
+    out+= epItems.length ? ('<div class="plist">'+feeYears(epItems,moneyE)+'</div>')
+      : '<div class="plist"><div class="pat"><div class="fact"><span class="flab">No upcoming EPO renewal fees — no pending European applications among the numbers you entered.</span></div></div></div>';
     var extra=[];
-    if(epRows.length) extra.push(epRows.length+' European patent'+(epRows.length===1?'':'s')+' also carry annual renewal fees'+(epRows.filter(function(r){return r.next;}).length?(' (next dates: '+epRows.filter(function(r){return r.next;}).map(function(r){return esc(r.pid)+' '+fmtDate(r.next);}).join(', ')+')'):'')+' — EPO/national renewal amounts vary by country and year, so they are not included in this US estimate.');
-    if(noSchedule) extra.push(noSchedule+' entered item'+(noSchedule===1?'':'s')+' had no maintenance schedule (pending, unpublished, or not a granted patent).');
-    if(extra.length) out+='<div class="panel" style="margin-top:14px"><div style="font-size:12.5px;color:var(--mut);line-height:1.6">'+extra.map(function(t){return '• '+t;}).join('<br>')+'</div></div>';
+    if(epGranted) extra.push('<b>'+epGranted+' granted / validated European patent'+(epGranted===1?'':'s')+':</b> after grant, renewals are paid to each <b>national</b> office and vary by country — not included above.');
+    if(noSchedule) extra.push(noSchedule+' entered item'+(noSchedule===1?'':'s')+' had no fee schedule (pending US, unpublished, lapsed, or not covered).');
+    extra.push('<b>Included:</b> US — USPTO maintenance fees (3.5/7.5/11.5 yr) for granted US patents. EP — EPO renewal fees (year 3+) for pending European applications, next 5 years.');
+    extra.push('<b>Excluded:</b> national renewal fees after an EP patent grants &amp; is validated; attorney charges, translations, validation fees; late surcharges; fees already paid. US in USD, EP in EUR — shown separately, not added.');
+    out+='<div class="panel" style="margin-top:14px"><div style="font-size:12px;color:var(--mut);line-height:1.65">'+extra.map(function(t){return '• '+t;}).join('<br>')+'</div></div>';
     $("plist").innerHTML=out;
   }
 

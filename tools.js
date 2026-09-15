@@ -6,11 +6,11 @@
   var GRADE = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/patent-grade";
   var CONTACT = "https://ooanilhblskuaasxyimw.supabase.co/functions/v1/contact-message";
   var KEY = "sb_publishable_dQBbAXx5l_buD3m-HQieTA_UBQA125h";
-  // The platform is invite-only (set up personally after a walkthrough) — the free tools
-  // NEVER link into the app. Every "get set up" / "book" CTA routes to the scheduling link.
-  // ↓↓↓ SCHEDULING LINK — replace with your own Calendly / Cal.com link (e.g. https://cal.com/your-name/20min).
+  // Every free tool funnels to the self-serve free trial (Individual plan: 3 patents, 30 days).
+  // The "book a walkthrough" link stays as the secondary CTA.
   var BOOK_URL   = "https://cal.com/ipaxix/20min";
-  var SIGNUP_URL = BOOK_URL;
+  var TRIAL_URL  = "https://patent-platform.vercel.app/?trial=1";
+  var SIGNUP_URL = TRIAL_URL;
   var DEMO_URL   = BOOK_URL;
   // USPTO maintenance-fee schedule (eff. 19 Jan 2025) — [large, small, micro].
   var FEE = { "3.5":{large:2150,small:860,micro:430}, "7.5":{large:4040,small:1616,micro:808}, "11.5":{large:8280,small:3312,micro:1656} };
@@ -307,8 +307,22 @@
       CFG=cfg||{};
       try{ mountConnect(); }catch(_e){}
       var ctaS=$("ctaStart"), ctaD=$("ctaDemo");
-      if(ctaS){ ctaS.href=SIGNUP_URL; ctaS.target="_blank"; ctaS.rel="noopener"; }
-      if(ctaD){ ctaD.href="javascript:void(0)"; ctaD.addEventListener("click",function(e){ e.preventDefault(); var f=document.getElementById("ipxFab"); if(f)f.click(); }); }
+      if(ctaS){ ctaS.href=SIGNUP_URL; ctaS.target="_blank"; ctaS.rel="noopener"; ctaS.textContent="Start free trial — 3 patents, 30 days"; }
+      if(ctaD){ ctaD.href=BOOK_URL; ctaD.target="_blank"; ctaD.rel="noopener"; ctaD.textContent="Book a walkthrough"; }
+      // Trial-forward CTA copy + tier line, applied on every free-tool page.
+      try {
+        var ctaSec = ctaS && ctaS.closest ? ctaS.closest(".cta") : null;
+        if(ctaSec){
+          var _h2 = ctaSec.querySelector("h2"); if(_h2) _h2.textContent = "See it on your whole portfolio — free for 30 days.";
+          var _p = ctaSec.querySelector("p"); if(_p) _p.innerHTML = "This snapshot is a one-time look. Start a free trial and put up to 3 of your patents on the live board — every US &amp; European deadline monitored, plus prosecution, docketing and actions. Setup is just the patent numbers.";
+          if(!ctaSec.querySelector(".plansline")){
+            var _pl = document.createElement("div"); _pl.className = "plansline";
+            _pl.style.cssText = "margin-top:16px;font-size:13px;opacity:.8;line-height:1.6";
+            _pl.innerHTML = "Plans for every setup — <b>Individual</b>, <b>Corporate</b> (in-house teams &amp; attorneys) and <b>Practice</b> (firms &amp; their clients). <a href=\"https://ipaxix.online/#pricing\" style=\"color:inherit;text-decoration:underline\">See all plans &rarr;</a>";
+            ctaSec.appendChild(_pl);
+          }
+        }
+      } catch(_e){}
       $("run").addEventListener("click",run);
       $("pn").addEventListener("keydown",function(e){ if((e.metaKey||e.ctrlKey)&&e.key==="Enter") run(); });
       var entSel=$("entity");

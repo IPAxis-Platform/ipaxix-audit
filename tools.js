@@ -314,7 +314,7 @@
         var ctaSec = ctaS && ctaS.closest ? ctaS.closest(".cta") : null;
         if(ctaSec){
           var _h2 = ctaSec.querySelector("h2"); if(_h2) _h2.textContent = "See it on your whole portfolio — free for 30 days.";
-          var _p = ctaSec.querySelector("p"); if(_p) _p.innerHTML = "This snapshot is a one-time look. Start a free trial and put up to 3 of your patents on the live board — every US &amp; European deadline monitored, plus prosecution, docketing and actions. Setup is just the patent numbers.";
+          var _p = ctaSec.querySelector("p"); if(_p) _p.innerHTML = "This snapshot is a one-time look. Start a free trial and put up to 3 of your patents on the live board — deadlines auto-updated from the USPTO &amp; EPO, office-action summaries, a renewal-cost forecast, real-time deadline tracking, and an AI agent you can ask anything about your portfolio. Setup is just the patent numbers.";
           if(!ctaSec.querySelector(".plansline")){
             var _pl = document.createElement("div"); _pl.className = "plansline";
             _pl.style.cssText = "margin-top:16px;font-size:13px;opacity:.8;line-height:1.6";

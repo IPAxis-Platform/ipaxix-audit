@@ -160,7 +160,7 @@
     if(epGranted) extra.push('<b>'+epGranted+' granted / validated European patent'+(epGranted===1?'':'s')+':</b> after grant, renewals are paid to each <b>national</b> office and vary by country — not included above.');
     if(noSchedule) extra.push(noSchedule+' entered item'+(noSchedule===1?'':'s')+' had no fee schedule (pending US, unpublished, lapsed, or not covered).');
     extra.push('<b>Included:</b> US — USPTO maintenance fees (3.5/7.5/11.5 yr) for granted US patents. EP — EPO renewal fees (year 3+) for pending European applications, next 5 years.');
-    extra.push('<b>Excluded:</b> national renewal fees after an EP patent grants &amp; is validated; attorney charges, translations, validation fees; late surcharges; fees already paid. US in USD, EP in EUR — shown separately, not added.');
+    extra.push('<b>Excluded:</b> national renewal fees after an EP patent grants &amp; is validated (these vary by country and aren’t a single EPO fee); attorney / agent charges, translations and validation fees; late-payment surcharges; and any fee already paid. Amounts are estimated from filing / grant dates. US shown in USD, EP in EUR — the two are not converted or added together.');
     out+='<div class="panel" style="margin-top:14px"><div style="font-size:12px;color:var(--mut);line-height:1.65">'+extra.map(function(t){return '• '+t;}).join('<br>')+'</div></div>';
     $("plist").innerHTML=out;
   }
